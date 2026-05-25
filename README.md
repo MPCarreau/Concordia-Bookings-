@@ -1,7 +1,6 @@
 Concordia Booking Website
 
-This is a collaborative project 
-A web-based resource booking system built with Express.js, MySQL, and vanilla JavaScript.
+This is a collaborative project: A web-based resource booking system built with Express.js, MySQL, and JavaScript.
 
 ## 🎯 Features
 
