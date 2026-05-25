@@ -1,0 +1,263 @@
+[
+  {
+    "results": [
+      {
+        "id": 1,
+        "ResCategory": "Study Rooms",
+        "ResName": "Small Study Room A - Capacity: 4 people, Location: Library 2nd floor",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 2,
+        "ResCategory": "Study Rooms",
+        "ResName": "Small Study Room B - Capacity: 4 people, Location: Library 2nd floor",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 3,
+        "ResCategory": "Study Rooms",
+        "ResName": "Medium Study Room C - Capacity: 8 people, Location: Library 3rd floor",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 4,
+        "ResCategory": "Study Rooms",
+        "ResName": "Large Study Room D - Capacity: 12 people, Location: Library 3rd floor",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 5,
+        "ResCategory": "Computer Labs",
+        "ResName": "Computer Lab 1 - 20 workstations, Location: EV Building, Room 001",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 6,
+        "ResCategory": "Computer Labs",
+        "ResName": "Computer Lab 2 - 30 workstations, Location: EV Building, Room 002",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 7,
+        "ResCategory": "Computer Labs",
+        "ResName": "Mac Lab - 15 Mac workstations, Location: EV Building, Room 102",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 8,
+        "ResCategory": "Computer Labs",
+        "ResName": "Engineering Lab - 25 specialized workstations, Location: EV Building, Room 201",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 9,
+        "ResCategory": "Meeting Rooms",
+        "ResName": "Conference Room A - Capacity: 20 people, Projector, Whiteboard",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 10,
+        "ResCategory": "Meeting Rooms",
+        "ResName": "Conference Room B - Capacity: 15 people, Video conferencing equipment",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 11,
+        "ResCategory": "Meeting Rooms",
+        "ResName": "Seminar Room - Capacity: 30 people, Presentation equipment",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 12,
+        "ResCategory": "Meeting Rooms",
+        "ResName": "Board Room - Capacity: 12 people, Executive meeting space",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 13,
+        "ResCategory": "Equipment",
+        "ResName": "Laptops - Available for short-term loan",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 14,
+        "ResCategory": "Equipment",
+        "ResName": "Projectors - Portable presentation equipment",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 15,
+        "ResCategory": "Equipment",
+        "ResName": "Cameras - Digital cameras for student projects",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 16,
+        "ResCategory": "Equipment",
+        "ResName": "Audio Equipment - Microphones, speakers, recording equipment",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 17,
+        "ResCategory": "Specialized Facilities",
+        "ResName": "3D Printing Lab - Location: EV Building, Room 301",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 18,
+        "ResCategory": "Specialized Facilities",
+        "ResName": "Electronics Workshop - Location: EV Building, Room 302",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 19,
+        "ResCategory": "Specialized Facilities",
+        "ResName": "Maker Space - General workshop area, Location: EV Building, Room 303",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      },
+      {
+        "id": 20,
+        "ResCategory": "Specialized Facilities",
+        "ResName": "Photography Studio - Professional lighting and equipment",
+        "FutureParam1": null,
+        "FutureParam2": null,
+        "FutureParam3": null,
+        "FutureParam4": null,
+        "FutureParam5": null,
+        "created_at": "2025-09-30 20:43:04",
+        "updated_at": "2025-09-30 20:43:04"
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "ENAM",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 0.4305
+      },
+      "duration": 0.4305,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 184320,
+      "rows_read": 20,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]

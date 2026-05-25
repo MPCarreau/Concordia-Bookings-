@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Concordia Student Services - Bookings</title>
+        <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+        
+        <script>
+            // Basic test to verify JavaScript is working
+            function basicTest() {
+                console.log('JavaScript is working!');
+            }
+            
+            // Test on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Page loaded successfully');
+            });
+        </script>
+        
+        <link rel="stylesheet" href="static/style.css"> 
+    <script type="text/javascript" src="darkmode.js" defer> </script>
+    <script type="text/javascript" src="backend/scripts.js"></script>
+    <script type="text/javascript" src="src/profile-dropdown-component.js" defer></script>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        
+        <script>
+            const API_BASE = window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : 'https://soen287project4-production.up.railway.app';
+            // Simple test function
+            function testCancelButton(bookingId) {
+                // Find the booking data and show confirmation page
+                showCancellationConfirmation(bookingId);
+            }
+
+            function showCancellationConfirmation(bookingId) {
+                // Find the booking details from the displayed bookings
+                const bookingElements = document.querySelectorAll('.cancel-booking-btn');
+                let bookingData = null;
+                
+                // Get booking data from the current user's bookings
+                const user = checkAuthentication();
+                if (user && window.currentUserBookings) {
+                    bookingData = window.currentUserBookings.find(b => b.id == bookingId);
+                }
+
+                if (!bookingData) {
+                    showTemporaryMessage('Booking information not found. Please refresh the page and try again.', 'error');
+                    return;
+                }
+
+                // Create confirmation UI
+                const confirmationHtml = `
+                    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 30px; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <h3 style="color: #856404; margin-top: 0; margin-bottom: 20px;">
+                            ⚠️ Confirm Booking Cancellation
+                        </h3>
+                        
+                        <div style="background-color: white; border-radius: 6px; padding: 20px; margin-bottom: 20px; border: 1px solid #e0e0e0;">
+                            <h4 style="margin-top: 0; color: #333;">Booking Details:</h4>
+                            <div style="margin-bottom: 10px;"><strong>Resource:</strong> ${bookingData.resource_name}</div>
+                            <div style="margin-bottom: 10px;"><strong>Category:</strong> ${bookingData.resource_category}</div>
+                            <div style="margin-bottom: 10px;"><strong>Date:</strong> ${formatBookingDate(bookingData.booking_date)}</div>
+                            <div style="margin-bottom: 10px;"><strong>Time:</strong> ${bookingData.time_slot}</div>
+                            ${bookingData.purpose ? `<div style="margin-bottom: 10px;"><strong>Purpose:</strong> ${bookingData.purpose}</div>` : ''}
+                            ${bookingData.contact ? `<div style="margin-bottom: 10px;"><strong>Contact:</strong> ${bookingData.contact}</div>` : ''}
+                        </div>
+                        
+                        <div style="background-color: #f8d7da; border-radius: 6px; padding: 15px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                            <p style="margin: 0; color: #721c24;">
+                                <strong>Warning:</strong> This action cannot be undone. Once cancelled, this booking slot will become available for other users to book.
+                            </p>
+                        </div>
+                        
+                        <div style="text-align: center; gap: 15px; display: flex; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="proceedWithCancellation(${bookingId})" style="background-color: #dc3545; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; min-width: 140px;">
+                                Yes, Cancel Booking
+                            </button>
+                            <button onclick="hideCancellationConfirmation()" style="background-color: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; min-width: 140px;">
+                                Keep Booking
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Show the confirmation UI
+                const bookingsBox = document.getElementById('my-bookings-box');
+                bookingsBox.innerHTML = `
+                    <h3 style="color: #333; margin-bottom: 20px;">Cancel Booking</h3>
+                    ${confirmationHtml}
+                `;
+            }
+
+            function formatBookingDate(dateString) {
+                // Validate input
+                if (!dateString || typeof dateString !== 'string') {
+                    console.error('Invalid date string:', dateString);
+                    return 'Invalid Date';
+                }
+
+                // Parse the date string as local time to avoid timezone issues
+                const parts = dateString.split('-');
+                if (parts.length !== 3) {
+                    console.error('Date string not in YYYY-MM-DD format:', dateString);
+                    return dateString; // Return original string if format is wrong
+                }
+
+                const year = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10);
+                const day = parseInt(parts[2], 10);
+
+                // Validate parsed values
+                if (isNaN(year) || isNaN(month) || isNaN(day)) {
+                    console.error('Failed to parse date components:', { year, month, day });
+                    return dateString;
+                }
+
+                const date = new Date(year, month - 1, day);
+
+                // Check if date is valid
+                if (isNaN(date.getTime())) {
+                    console.error('Invalid date created:', date);
+                    return dateString;
+                }
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+
+                const dateOnly = new Date(date);
+                dateOnly.setHours(0, 0, 0, 0);
+
+                if (dateOnly.getTime() === today.getTime()) {
+                    return 'Today - ' + date.toLocaleDateString('en-US', {
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                } else if (dateOnly.getTime() === tomorrow.getTime()) {
+                    return 'Tomorrow - ' + date.toLocaleDateString('en-US', {
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                } else {
+                    return date.toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                }
+            }
+
+            function hideCancellationConfirmation() {
+                // Go back to showing user bookings
+                const user = checkAuthentication();
+                if (user) {
+                    displayUserBookings(user);
+                }
+            }
+
+            async function proceedWithCancellation(bookingId) {
+                // Show loading state
+                const bookingsBox = document.getElementById('my-bookings-box');
+                bookingsBox.innerHTML = `
+                    <h3 style="color: #333; margin-bottom: 20px;">Cancelling Booking...</h3>
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007cba; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <p style="margin-top: 20px; color: #666;">Processing your cancellation request...</p>
+                    </div>
+                    <style>
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                `;
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/cancel-booking`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            bookingId: parseInt(bookingId)
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Show success message
+                        bookingsBox.innerHTML = `
+                            <h3 style="color: #333; margin-bottom: 20px;">Booking Cancelled Successfully</h3>
+                            <div style="background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 30px; text-align: center;">
+                                <div style="font-size: 48px; color: #155724; margin-bottom: 15px;">✅</div>
+                                <h4 style="color: #155724; margin-bottom: 15px;">Cancellation Confirmed</h4>
+                                <p style="color: #155724; margin-bottom: 25px;">Your booking has been successfully cancelled and the time slot is now available for other users.</p>
+                                <button onclick="hideCancellationConfirmation()" style="background-color: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px;">
+                                    View My Bookings
+                                </button>
+                            </div>
+                        `;
+                        loadUserBookings(); 
+                    } else {
+                        // Show error message
+                        bookingsBox.innerHTML = `
+                            <h3 style="color: #333; margin-bottom: 20px;">Cancellation Failed</h3>
+                            <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 30px; text-align: center;">
+                                <div style="font-size: 48px; color: #721c24; margin-bottom: 15px;">❌</div>
+                                <h4 style="color: #721c24; margin-bottom: 15px;">Error</h4>
+                                <p style="color: #721c24; margin-bottom: 25px;">${result.error}</p>
+                                <div style="gap: 15px; display: flex; justify-content: center; flex-wrap: wrap;">
+                                    <button onclick="showCancellationConfirmation(${bookingId})" style="background-color: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                                        Try Again
+                                    </button>
+                                    <button onclick="hideCancellationConfirmation()" style="background-color: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                                        Back to Bookings
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error cancelling booking:', error);
+                    bookingsBox.innerHTML = `
+                        <h3 style="color: #333; margin-bottom: 20px;">Network Error</h3>
+                        <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 30px; text-align: center;">
+                            <div style="font-size: 48px; color: #721c24; margin-bottom: 15px;">🌐</div>
+                            <h4 style="color: #721c24; margin-bottom: 15px;">Connection Problem</h4>
+                            <p style="color: #721c24; margin-bottom: 25px;">Unable to connect to the server. Please check your internet connection and try again.</p>
+                            <div style="gap: 15px; display: flex; justify-content: center; flex-wrap: wrap;">
+                                <button onclick="proceedWithCancellation(${bookingId})" style="background-color: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                                    Retry
+                                </button>
+                                <button onclick="hideCancellationConfirmation()" style="background-color: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                                    Back to Bookings
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            function checkAuthentication() {
+                const userSession = localStorage.getItem('userSession');
+                
+                if (!userSession) {
+                    return null;
+                }
+                
+                try {
+                    return JSON.parse(userSession);
+                } catch (error) {
+                    localStorage.removeItem('userSession');
+                    return null;
+                }
+            }
+
+            function loadUserBookings() {
+                const user = checkAuthentication();
+                
+                if (!user) {
+                    showNotSignedInState();
+                    return;
+                }
+
+                // Show user's bookings
+                displayUserBookings(user);
+            }
+
+            function showNotSignedInState() {
+                const bookingsBox = document.getElementById('my-bookings-box');
+                bookingsBox.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <h3>Not Signed In</h3>
+                        <p>Please log in to view and manage your bookings.</p>
+                        <button onclick="window.location.href='login.html'" style="padding: 12px 24px; background-color: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Go to Login</button>
+                    </div>
+                `;
+                
+                // Hide the New Booking button
+                const newBookingBtn = document.getElementById('new-booking-btn');
+                if (newBookingBtn) {
+                    newBookingBtn.style.display = 'none';
+                }
+                
+            }
+
+            function displayUserBookings(user) {
+                const bookingsBox = document.getElementById('my-bookings-box');
+                
+                // Show loading state
+                bookingsBox.innerHTML = `
+                    <h3 style="color: #333; margin-bottom: 20px;">My Bookings</h3>
+                    <div style="text-align: center; padding: 20px;">
+                        <p>Loading your bookings...</p>
+                    </div>
+                `;
+                
+                // Fetch user's bookings from the API
+                fetchUserBookings(user.userId);
+            }
+
+            async function fetchUserBookings(userId) {
+                try {
+                    const response = await fetch(`${API_BASE}/api/user-bookings?userId=${userId}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        displayBookingsList(data.bookings);
+                    } else {
+                        showBookingsError('Failed to load bookings: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Error fetching user bookings:', error);
+                    showBookingsError('Network error loading bookings. Please try again.');
+                }
+            }
+
+            function displayBookingsList(bookings) {
+                const bookingsBox = document.getElementById('my-bookings-box');
+                
+                // Store bookings globally for cancellation function
+                window.currentUserBookings = bookings;
+                
+                if (bookings.length === 0) {
+                    bookingsBox.innerHTML = `
+                        <h3 style="color: #333; margin-bottom: 20px;">My Bookings</h3>
+                        <div style="padding: 20px; background-color: #f9f9f9; border-radius: 8px; margin-bottom: 20px;">
+                            <p style="color: #666; font-style: italic;">No bookings found.</p>
+                            <p style="color: #666;">You haven't made any bookings yet. Click the "New Booking" button below to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let bookingsHtml = `
+                    <h3 style="color: #333; margin-bottom: 20px;">My Bookings (${bookings.length})</h3>
+                `;
+
+                // Group bookings by date
+                const bookingsByDate = {};
+                bookings.forEach(booking => {
+                    const date = booking.booking_date;
+                    if (!bookingsByDate[date]) {
+                        bookingsByDate[date] = [];
+                    }
+                    bookingsByDate[date].push(booking);
+                });
+
+                // Display bookings grouped by date
+                Object.keys(bookingsByDate).sort().forEach(date => {
+                    const dateBookings = bookingsByDate[date];
+                    const formattedDate = formatDate(date);
+                    
+                    bookingsHtml += `
+                        <div style="margin-bottom: 30px; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                            <div style="background-color: #f8f9fa; padding: 15px; border-bottom: 1px solid #e0e0e0;">
+                                <h4 style="margin: 0; color: #333; font-size: 16px;">${formattedDate}</h4>
+                            </div>
+                            <div style="padding: 0;">
+                    `;
+
+                    dateBookings.forEach(booking => {
+                        // Parse booking date as local time with validation
+                        let isPast = false;
+                        try {
+                            const parts = booking.booking_date.split('-');
+                            if (parts.length === 3) {
+                                const year = parseInt(parts[0], 10);
+                                const month = parseInt(parts[1], 10);
+                                const day = parseInt(parts[2], 10);
+
+                                if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+                                    const bookingDate = new Date(year, month - 1, day);
+                                    bookingDate.setHours(23, 59, 59, 999); // End of day
+
+                                    const now = new Date();
+                                    isPast = bookingDate < now;
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error parsing booking date:', e);
+                        }
+
+                        const statusColor = isPast ? '#6c757d' : '#007cba';
+                        const statusText = isPast ? 'Completed' : 'Upcoming';
+                        
+                        bookingsHtml += `
+                            <div style="padding: 20px; border-bottom: 1px solid #f0f0f0; background-color: white;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
+                                    <div style="flex: 1; min-width: 200px;">
+                                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                            <span style="background-color: ${statusColor}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; margin-right: 10px;">
+                                                ${statusText}
+                                            </span>
+                                            <strong style="color: #333; font-size: 16px;">${booking.time_slot}</strong>
+                                        </div>
+                                        <div style="color: #666; margin-bottom: 4px;">
+                                            <strong>${booking.resource_name}</strong>
+                                        </div>
+                                        <div style="color: #888; font-size: 14px; margin-bottom: 8px;">
+                                            Category: ${booking.resource_category}
+                                        </div>
+                                        ${booking.purpose ? `
+                                            <div style="color: #666; font-size: 14px; margin-bottom: 4px;">
+                                                <strong>Purpose:</strong> ${booking.purpose}
+                                            </div>
+                                        ` : ''}
+                                        ${booking.contact ? `
+                                            <div style="color: #666; font-size: 14px;">
+                                                <strong>Contact:</strong> ${booking.contact}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <div style="text-align: right; min-width: 80px;">
+                                        <button type="button" class="modify-booking-btn" data-booking-id="${booking.id}" onclick="handleModifyBooking(${booking.id})" style="background-color: #007cba; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-top: 5px; margin-right: 8px; display: inline-block; transition: background-color 0.3s;">
+                                            Modify
+                                        </button>
+                                        <button type="button" class="cancel-booking-btn" data-booking-id="${booking.id}" onclick="testCancelButton(${booking.id})" style="background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-top: 5px; display: inline-block; transition: background-color 0.3s;">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    bookingsHtml += `
+                            </div>
+                        </div>
+                    `;
+                });
+
+                bookingsBox.innerHTML = `<div class="bookings-inner">${bookingsHtml}</div>`;
+                
+                // Add event listeners for cancel buttons
+                const cancelButtons = bookingsBox.querySelectorAll('.cancel-booking-btn');
+                cancelButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const bookingId = this.getAttribute('data-booking-id');
+                        handleCancelBooking(bookingId);
+                    });
+                });
+            }
+
+            function formatDate(dateString) {
+                // Validate input
+                if (!dateString || typeof dateString !== 'string') {
+                    console.error('Invalid date string:', dateString);
+                    return 'Invalid Date';
+                }
+
+                // Parse the date string as local time to avoid timezone issues
+                const parts = dateString.split('-');
+                if (parts.length !== 3) {
+                    console.error('Date string not in YYYY-MM-DD format:', dateString);
+                    return dateString; // Return original string if format is wrong
+                }
+
+                const year = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10);
+                const day = parseInt(parts[2], 10);
+
+                // Validate parsed values
+                if (isNaN(year) || isNaN(month) || isNaN(day)) {
+                    console.error('Failed to parse date components:', { year, month, day });
+                    return dateString;
+                }
+
+                const date = new Date(year, month - 1, day);
+
+                // Check if date is valid
+                if (isNaN(date.getTime())) {
+                    console.error('Invalid date created:', date);
+                    return dateString;
+                }
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+
+                const dateOnly = new Date(date);
+                dateOnly.setHours(0, 0, 0, 0);
+
+                if (dateOnly.getTime() === today.getTime()) {
+                    return 'Today - ' + date.toLocaleDateString('en-US', {
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                } else if (dateOnly.getTime() === tomorrow.getTime()) {
+                    return 'Tomorrow - ' + date.toLocaleDateString('en-US', {
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                } else {
+                    return date.toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                }
+            }
+
+            function showBookingsError(message) {
+                const bookingsBox = document.getElementById('my-bookings-box');
+                bookingsBox.innerHTML = `
+                    <h3 style="color: #333; margin-bottom: 20px;">My Bookings</h3>
+                    <div style="padding: 20px; background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; border-radius: 8px; margin-bottom: 20px;">
+                        <p><strong>Error:</strong> ${message}</p>
+                        <button onclick="location.reload()" style="background-color: #721c24; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+
+            // Simplified handler function - make it global
+            function handleCancelBooking(bookingId) {
+                console.log('handleCancelBooking called with ID:', bookingId);
+                
+                // Show the UI confirmation window directly
+                showCancellationConfirmation(bookingId);
+            }
+            
+            // Make it globally accessible
+            window.handleCancelBooking = handleCancelBooking;
+            function handleModifyBooking(bookingId) {
+                console.log('handleModifyBooking called with ID:', bookingId);
+                window.location.href = `makeBooking.html?modifyId=${bookingId}`;
+            }
+            window.handleModifyBooking = handleModifyBooking;
+
+            async function performCancelBooking(bookingId) {
+                try {
+                    console.log('Sending cancel request for booking ID:', bookingId);
+                    
+                    const response = await fetch(`${API_BASE}/api/cancel-booking`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            bookingId: parseInt(bookingId)
+                        })
+                    });
+
+                    console.log('Cancel response status:', response.status);
+                    const result = await response.json();
+                    console.log('Cancel response data:', result);
+
+                    if (result.success) {
+                        // Show success message
+                        showTemporaryMessage('Booking cancelled successfully!', 'success');
+                        // Refresh the bookings list
+                        const user = checkAuthentication();
+                        if (user) {
+                            fetchUserBookings(user.userId);
+                        }
+                    } else {
+                        // Show error message
+                        showTemporaryMessage('Failed to cancel booking: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error cancelling booking:', error);
+                    showTemporaryMessage('Network error. Please try again.', 'error');
+                }
+            }
+
+            // Function to show temporary messages to the user
+            function showTemporaryMessage(message, type = 'info') {
+                // Remove any existing message
+                const existingMessage = document.getElementById('temporary-message');
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
+
+                // Create message element
+                const messageDiv = document.createElement('div');
+                messageDiv.id = 'temporary-message';
+                messageDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    z-index: 1000;
+                    font-weight: bold;
+                    max-width: 300px;
+                    word-wrap: break-word;
+                `;
+
+                // Set colors based on message type
+                if (type === 'success') {
+                    messageDiv.style.backgroundColor = '#d4edda';
+                    messageDiv.style.color = '#155724';
+                    messageDiv.style.border = '1px solid #c3e6cb';
+                } else if (type === 'error') {
+                    messageDiv.style.backgroundColor = '#f8d7da';
+                    messageDiv.style.color = '#721c24';
+                    messageDiv.style.border = '1px solid #f5c6cb';
+                } else {
+                    messageDiv.style.backgroundColor = '#d1ecf1';
+                    messageDiv.style.color = '#0c5460';
+                    messageDiv.style.border = '1px solid #bee5eb';
+                }
+
+                messageDiv.textContent = message;
+                document.body.appendChild(messageDiv);
+
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
+
+            function createNewBooking() {
+                const user = checkAuthentication();
+                
+                if (!user) {
+                    showTemporaryMessage('Please log in to create a booking.', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+                
+                // Redirect to the booking page
+                window.location.href = 'makeBooking.html';
+            }
+
+            // Load user bookings when page loads
+            window.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM loaded, starting initialization...');
+                loadUserBookings();
+                
+                // Add a simple test to verify JavaScript is working
+                setTimeout(function() {
+                    console.log('Testing if we can find cancel buttons...');
+                    const buttons = document.querySelectorAll('.cancel-booking-btn');
+                    console.log('Found', buttons.length, 'cancel buttons');
+                }, 2000);
+            });
+        </script>
+    </head>
+    <body>
+        
+        <header>
+            <h1>Concordia Student Services</h1>
+               <!-- Dark Mode Button -->
+            <button id="theme-switch">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
+
+            </button>
+        </header>
+
+        <nav>
+            <a href="index.html">Home</a> |
+            <span class="auth-only"><a href="profile.html">Profile</a> |</span>
+            <a href="resources.html">Resources</a> |
+            <span class="auth-only"><a href="bookings.html">Bookings</a> |</span>
+            <span class="auth-only"><a href="bookingRequests.html">Booking Requests</a> |</span>
+            <span class="admin-only" style="display:none;"><a href="statistics.html">Statistics</a> |</span>
+            <span class="admin-only" style="display:none;"><a href="adminSchedule.html">Schedule Management</a></span>
+        </nav>
+        <script>
+        // Hide register block when logged in and show admin-only elements for admins
+        document.addEventListener('DOMContentLoaded', function() {
+            const userSession = localStorage.getItem('userSession');
+            const adminSession = localStorage.getItem('adminSession');
+            const registerBlock = document.getElementById('registerBlock');
+            
+            // Hide register block if logged in
+            if (userSession && registerBlock) {
+                registerBlock.style.display = 'none';
+            } else if (registerBlock) {
+                registerBlock.style.display = '';
+            }
+            
+            // Show admin-only elements for admins
+            let isAdmin = false;
+            const session = userSession || adminSession;
+            if (session) {
+                try {
+                    const user = JSON.parse(session);
+                    if (user && user.isAdmin === true) {
+                        isAdmin = true;
+                    }
+                } catch (e) {
+                    // ignore JSON parse errors
+                }
+            }
+            document.querySelectorAll('.admin-only').forEach(function(el) {
+                el.style.display = isAdmin ? '' : 'none';
+            });
+        });
+        </script>
+
+        <div class="content">
+            <h3>Bookings Management</h3>
+            <p>Manage your resource bookings and reservations.</p>
+
+            <!-- My Bookings Box -->
+            <div id="my-bookings-box" class="my-bookings-outer">
+                <!-- Content will be loaded by JavaScript -->
+                <div class="bookings-inner" style="text-align: center; padding: 20px;">
+                    <p>Loading your bookings...</p>
+                </div>
+            </div>
+
+            <!-- New Booking Button -->
+            <div style="text-align: center; margin: 40px 0;">
+                <button id="new-booking-btn" onclick="createNewBooking()" style="background-color: #007cba; color: white; border: none; padding: 15px 30px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 8px rgba(0, 124, 186, 0.3); transition: all 0.3s ease;">
+                    New Booking
+                </button>
+            </div>
+
+            <div class="need-help-outer" style="margin-top: 40px;">
+                <div class="bookings-inner need-help-inner">
+                    <h4>Need Help?</h4>
+                    <p>To make a new booking:</p>
+                    <ol>
+                        <li>Click the "New Booking" button above</li>
+                        <li>Select your preferred date and time</li>
+                        <li>Provide booking details and submit</li>
+                    </ol>
+                    <p>You can view, modify, or cancel your existing bookings in the "My Bookings" section above.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Contact Us:</p>
+            <ul class="contact_list">
+                <li>514-848-2424</li>
+                <li>csshelp@concordia.ca</li>
+                <li>1455 De Maisonneuve Blvd. W. Montreal</li>
+            </ul>
+
+            <p>&copy Team SOEN 2025</p>
+        </footer>
+        
+    </body>
+
+</html>

@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Concordia Student Services - Make Booking</title>
+        <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+        
+        <link rel="stylesheet" href="static/style.css"> 
+    <script type="text/javascript" src="backend/scripts.js"></script>
+    <script type="text/javascript" src="darkmode.js" defer></script>
+    <script type="text/javascript" src="src/profile-dropdown-component.js" defer></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        
+        <style>
+            .booking-controls {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 30px;
+                display: flex;
+                gap: 20px;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            .control-group {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .control-group label {
+                font-weight: 600;
+                color: #333;
+                font-size: 14px;
+            }
+
+            .control-group select,
+            .control-group input[type="date"] {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                min-width: 180px;
+            }
+
+            .refresh-btn {
+                background-color: #007cba;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                margin-top: 20px;
+            }
+
+            .refresh-btn:hover {
+                background-color: #005a87;
+            }
+
+            .availability-grid {
+                overflow-x: auto;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                margin-top: 20px;
+            }
+
+            .grid-table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 1200px;
+            }
+
+            .grid-table th {
+                background-color: #f5f5f5;
+                padding: 12px 8px;
+                text-align: center;
+                border: 1px solid #ddd;
+                font-weight: 600;
+                font-size: 12px;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+
+            .grid-table td {
+                padding: 0;
+                border: 1px solid #ddd;
+                text-align: center;
+                vertical-align: middle;
+                min-width: 60px;
+                height: 1px
+            }
+
+            .resource-name {
+                background-color: #f9f9f9;
+                padding: 12px 8px;
+                text-align: left;
+                font-weight: 500;
+                font-size: 12px;
+                min-width: 200px;
+                max-width: 200px;
+                position: sticky;
+                left: 0;
+                z-index: 5;
+                border-right: 2px solid #ccc;
+            }
+
+            .time-slot {
+                width: 100%;
+                height: 100%;
+                min-height: 40px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 11px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+                box-sizing: border-box;
+            }
+
+            .time-slot.available {
+                background-color: #d4edda;
+                color: #155724;
+            }
+
+            .time-slot.available:hover {
+                background-color: #c3e6cb;
+                transform: scale(1.05);
+            }
+
+            .time-slot.booked {
+                background-color: #f8d7da;
+                color: #721c24;
+                cursor: not-allowed;
+            }
+
+            .time-slot.maintenance {
+                background-color: #fff3cd;
+                color: #856404;
+                cursor: not-allowed;
+            }
+
+            /* When in manage mode, maintenance slots should be clickable */
+            body.manage-mode .time-slot.maintenance {
+                cursor: pointer;
+            }
+
+            body.manage-mode .time-slot.maintenance:hover {
+                background-color: #ffeaa7;
+                transform: scale(1.05);
+            }
+
+            .legend {
+                display: flex;
+                gap: 20px;
+                margin-bottom: 20px;
+                padding: 15px;
+                background-color: #f8f9fa;
+                border-radius: 8px;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+            }
+
+            .legend-color {
+                width: 20px;
+                height: 20px;
+                border-radius: 4px;
+                border: 1px solid #ddd;
+            }
+
+            .loading {
+                text-align: center;
+                padding: 40px;
+                color: #666;
+            }
+
+            .error-message {
+                background-color: #f8d7da;
+                border: 1px solid #f5c6cb;
+                color: #721c24;
+                padding: 15px;
+                border-radius: 8px;
+                margin: 20px 0;
+            }
+
+            .booking-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+            }
+
+            .modal-content {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: white;
+                padding: 30px;
+                border-radius: 8px;
+                max-width: 500px;
+                width: 90%;
+            }
+
+            .modal-header {
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .modal-header h3 {
+                margin: 0;
+                color: #333;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: 500;
+                color: #333;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                width: 100%;
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                box-sizing: border-box;
+            }
+
+            .form-group textarea {
+                resize: vertical;
+                min-height: 80px;
+            }
+
+            .modal-buttons {
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+                margin-top: 20px;
+            }
+
+            .modal-buttons button {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .btn-primary {
+                background-color: #007cba;
+                color: white;
+            }
+
+            .btn-secondary {
+                background-color: #6c757d;
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background-color: #005a87;
+            }
+
+            .btn-secondary:hover {
+                background-color: #545b62;
+            }
+            .modify-banner {
+                background-color: #fff3cd;
+                color: #856404;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                border: 1px solid #ffeeba;
+                text-align: center;
+                font-weight: bold;
+                display: none; /* Hidden by default */
+            }
+        </style>
+        
+        <script>
+            let currentDate = new Date().toISOString().split('T')[0];
+            let currentCategory = 'all';
+            let resources = [];
+            let bookings = [];
+            let dailySchedule = { start: '09:00', end: '17:00', blackouts: [] };
+            let manageMode = false;
+            let modifyBookingId = new URLSearchParams(window.location.search).get('modifyId');
+            
+            const API_BASE = window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : 'https://soen287project4-production.up.railway.app';
+
+            function checkAuthentication() {
+                const userSession = localStorage.getItem('userSession');
+                const adminSession = localStorage.getItem('adminSession');
+                
+                if (userSession) {
+                    try {
+                        return JSON.parse(userSession);
+                    } catch (error) {
+                        localStorage.removeItem('userSession');
+                    }
+                }
+                
+                if (adminSession) {
+                    try {
+                        return JSON.parse(adminSession);
+                    } catch (error) {
+                        localStorage.removeItem('adminSession');
+                    }
+                }
+                
+                return null;
+            }
+
+            async function fetchResources() {
+                try {
+                    const response = await fetch(`${API_BASE}/api/resources`);
+                    const data = await response.json();
+                    if (data.success) {
+                        resources = data.resources;
+                        populateCategoryDropdown();
+                        await fetchBookings(currentDate, currentCategory);
+                    } else {
+                        showError('Failed to load resources: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Error loading resources:', error);
+                    showError('Network error loading resources. Please try again.');
+                }
+            }
+            async function fetchBookings(date, category) {
+                try {
+                    const scheduleRes = await fetch(`${API_BASE}/api/daily-schedule?date=${date}`);
+                    const scheduleData = await scheduleRes.json();
+                    
+                    if (scheduleData.success) {
+                        dailySchedule = scheduleData.schedule;
+                    }
+                    const response = await fetch(`${API_BASE}/api/bookings?date=${date}&category=${category}`);
+                    const data = await response.json();
+                    if (data.success) {
+                        bookings = data.bookings;
+                        renderAvailabilityGrid();
+                    } else {
+                        showError('Failed to load bookings: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Error loading bookings:', error);
+                    showError('Network error loading bookings. Please try again.');
+                }
+            }
+
+            function generateTimeSlots(startTime, endTime) {
+                const slots = [];
+                let current = new Date(`2000-01-01T${startTime}`);
+                const end = new Date(`2000-01-01T${endTime}`);
+
+                while (current < end) {
+                    const timeString = current.toTimeString().slice(0, 5);
+                    slots.push(timeString);
+                    current.setMinutes(current.getMinutes() + 30);
+                }
+                return slots;
+            }
+
+            function isSlotBlackout(slotTime) {
+                if (!dailySchedule.blackouts || dailySchedule.blackouts.length === 0) return false;
+                
+                return dailySchedule.blackouts.some(b => {
+                    return slotTime >= b.start_time && slotTime < b.end_time;
+                });
+            }
+
+            function populateCategoryDropdown() {
+                const categorySelect = document.getElementById('categorySelect');
+                const categories = [...new Set(resources.map(r => r.ResCategory))];
+                
+                categorySelect.innerHTML = '<option value="all">All Resources</option>';
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categorySelect.appendChild(option);
+                });
+            }
+
+            function renderAvailabilityGrid() {
+                const gridContainer = document.getElementById('availabilityGrid');
+                
+                // Filter resources by category
+                const filteredResources = currentCategory === 'all' 
+                    ? resources 
+                    : resources.filter(r => r.ResCategory === currentCategory);
+
+                if (filteredResources.length === 0) {
+                    gridContainer.innerHTML = '<div class="loading">No resources found for the selected category.</div>';
+                    return;
+                }
+
+                // Time slots from 9:00 to 22:00
+                const timeSlots  = generateTimeSlots(dailySchedule.start, dailySchedule.end);
+
+                if (timeSlots.length === 0) {
+                    gridContainer.innerHTML = '<div class="error-message">Facility is closed on this date.</div>';
+                    return;
+                }
+
+                let html = `
+                    <table class="grid-table">
+                        <thead>
+                            <tr>
+                                <th class="resource-name">Resource</th>
+                                ${timeSlots.map(slot => `<th>${slot}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                filteredResources.forEach(resource => {
+                    html += `<tr>
+                        <td class="resource-name">${resource.ResName}</td>`;
+                    
+                    timeSlots.forEach(slot => {
+                        const booking = bookings.find(b => 
+                            b.resource_id === resource.id && 
+                            b.time_slot === slot
+                        );
+                        
+                        let status = 'available';
+                        let isBlackout = isSlotBlackout(slot);
+
+                        if (booking) {
+                            status = booking.status; // 'booked' or 'maintenance'
+                        } else if (isBlackout) {
+                            status = 'maintenance'; // Visually treat blackout as maintenance
+                        }
+                        // In manage mode, allow clicking on available and maintenance slots
+                        // In normal mode, only allow clicking on available slots
+                        const isClickable = manageMode ? (status === 'available' || status === 'maintenance') : (status === 'available');
+                        
+                        // If it's a system blackout, forbid unblocking via normal UI
+                        const clickAction = isBlackout && !booking ? 
+                            `onclick="alert('This slot is blacked out by admin settings.')"` :
+                            (isClickable ? `onclick="openBookingModal(${resource.id}, '${slot}', '${resource.ResName}')"` : '');
+
+                        html += `<td>
+                            <div class="time-slot ${status}" ${clickAction}>
+                                ${status === 'available' ? '✓' : status === 'booked' ? '✕' : '⚠'}
+                            </div>
+                        </td>`;
+                    });
+                    
+                    html += '</tr>';
+                });
+
+                html += '</tbody></table>';
+                gridContainer.innerHTML = html;
+            }
+
+            function openBookingModal(resourceId, timeSlot, resourceName) {
+                const user = checkAuthentication();
+                if (!user) {
+                    alert('Please log in to make a booking.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // If in manage mode, toggle maintenance status instead
+                if (manageMode) {
+                    toggleMaintenanceStatus(resourceId, timeSlot, resourceName);
+                    return;
+                }
+
+                // Populate modal with booking details
+                document.getElementById('modalResourceName').textContent = resourceName;
+                document.getElementById('modalDate').textContent = currentDate;
+                document.getElementById('modalTime').textContent = timeSlot;
+                
+                // Store booking details for submission
+                window.currentBooking = {
+                    resourceId: resourceId,
+                    date: currentDate,
+                    timeSlot: timeSlot,
+                    userId: user.userId
+                };
+
+                // Show modal
+                document.getElementById('bookingModal').style.display = 'block';
+            }
+
+            function closeBookingModal() {
+                document.getElementById('bookingModal').style.display = 'none';
+                document.getElementById('bookingPurpose').value = '';
+                document.getElementById('bookingContact').value = '';
+            }
+
+            async function submitBooking() {
+                const purpose = document.getElementById('bookingPurpose').value.trim();
+                const contact = document.getElementById('bookingContact').value.trim();
+
+                if (!purpose) {
+                    alert('Please enter a booking purpose.');
+                    return;
+                }
+
+                if (!contact) {
+                    alert('Please enter contact information.');
+                    return;
+                }
+
+                const currentModifyId = new URLSearchParams(window.location.search).get('modifyId');
+
+                const payload = {
+                    newResourceId: window.currentBooking.resourceId,
+                    resourceId: window.currentBooking.resourceId,
+                    newDate: window.currentBooking.date,
+                    date: window.currentBooking.date,
+                    newTimeSlot: window.currentBooking.timeSlot,
+                    timeSlot: window.currentBooking.timeSlot,
+                    userId: window.currentBooking.userId,
+                    purpose: purpose,
+                    contact: contact,
+                    oldBookingId: currentModifyId 
+                };
+
+                // Determine Endpoint
+                const endpoint = currentModifyId ? '/api/modify-booking' : '/api/bookings';
+
+                try {
+                    // Make API call to create booking
+                    const response = await fetch(`${API_BASE}${endpoint}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert('Booking created successfully!');
+                        closeBookingModal();
+                        if (currentModifyId) {
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                            const banner = document.getElementById('modifyBanner');
+                            if (banner) banner.style.display = 'none';
+                            const header = document.querySelector('h2');
+                            if (header) header.textContent = 'Make a New Booking';
+                            if (typeof modifyBookingId !== 'undefined') modifyBookingId = null;
+                        }
+                        await fetchBookings(currentDate, currentCategory); // Refresh the grid
+                    } else {
+                        alert('Failed to create booking: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('Error creating booking:', error);
+                    alert('Network error. Please try again.');
+                }
+            }
+
+            function cancelModify() {
+                window.location.href = 'makeBooking.html';
+            }
+
+            function showError(message) {
+                const gridContainer = document.getElementById('availabilityGrid');
+                gridContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            }
+
+            function onDateChange() {
+                currentDate = document.getElementById('dateSelect').value;
+                fetchBookings(currentDate, currentCategory);
+            }
+
+            function onCategoryChange() {
+                currentCategory = document.getElementById('categorySelect').value;
+                renderAvailabilityGrid();
+            }
+
+            function refreshGrid() {
+                fetchBookings(currentDate, currentCategory);
+            }
+
+            function toggleManageMode() {
+                manageMode = !manageMode;
+                const btn = document.getElementById('manage-bookings-btn');
+                if (manageMode) {
+                    btn.textContent = 'Exit Manage Mode';
+                    btn.style.backgroundColor = '#dc3545';
+                    document.body.classList.add('manage-mode');
+                    // Re-render grid to update clickability
+                    renderAvailabilityGrid();
+                    alert('Manage mode activated. Click on available slots to block them or maintenance slots to unblock them.');
+                } else {
+                    btn.textContent = 'Manage Bookings (Block/Unblock for Maintenance)';
+                    btn.style.backgroundColor = '';
+                    document.body.classList.remove('manage-mode');
+                    // Re-render grid to update clickability
+                    renderAvailabilityGrid();
+                }
+            }
+
+            async function toggleMaintenanceStatus(resourceId, timeSlot, resourceName) {
+                const booking = bookings.find(b => 
+                    b.resource_id === resourceId && 
+                    b.time_slot === timeSlot
+                );
+
+                const isCurrentlyMaintenance = booking && booking.status === 'maintenance';
+                const action = isCurrentlyMaintenance ? 'unblock' : 'block';
+                
+                if (!confirm(`Are you sure you want to ${action} ${resourceName} at ${timeSlot} on ${currentDate}?`)) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/toggle-maintenance`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            resourceId: resourceId,
+                            date: currentDate,
+                            timeSlot: timeSlot,
+                            action: action
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert(`Successfully ${action === 'block' ? 'blocked' : 'unblocked'} the slot for maintenance.`);
+                        await fetchBookings(currentDate, currentCategory);
+                    } else {
+                        alert('Failed to update slot: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('Error toggling maintenance:', error);
+                    alert('Network error. Please try again.');
+                }
+            }
+
+            // Initialize page
+            window.addEventListener('DOMContentLoaded', function() {
+                
+                // Show admin-only features
+                let isAdmin = false;
+                const session = localStorage.getItem('userSession') || localStorage.getItem('adminSession');
+                if (session) {
+                    try {
+                        const user = JSON.parse(session);
+                        if (user && user.isAdmin === true) {
+                            isAdmin = true;
+                        }
+                    } catch (e) {
+                        // ignore JSON parse errors
+                    }
+                }
+                document.querySelectorAll('.admin-only').forEach(function(el) {
+                    el.style.display = isAdmin ? '' : 'none';
+                });
+                
+                // Set minimum date to today
+                const dateInput = document.getElementById('dateSelect');
+                dateInput.value = currentDate;
+                dateInput.min = currentDate;
+
+                if (modifyBookingId) {
+                    const banner = document.getElementById('modifyBanner');
+                    if(banner) banner.style.display = 'block';
+                    document.querySelector('h2').textContent = 'Modify Booking';
+                }
+
+                // Check authentication
+                const user = checkAuthentication();
+                if (!user) {
+                    alert('Please log in to access the booking system.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Load initial data
+                fetchResources();
+            });
+        </script>
+    </head>
+    <body>
+        
+        <header>
+            <h1>Concordia Student Services</h1>
+               <!-- Dark Mode Button -->
+            <button id="theme-switch">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
+
+            </button>
+        </header>
+
+        <nav>
+            <a href="index.html">Home</a> |
+            <a href="profile.html">Profile</a> |
+            <a href="resources.html">Resources</a> |
+            <a href="bookings.html">Bookings</a> |
+            <a href="bookingRequests.html">Booking Requests</a> |
+            <a href="statistics.html" class="admin-only" style="display:none;">Statistics |</a>
+            <a href="adminSchedule.html" class="admin-only" style="display:none;">Schedule Management</a>
+        </nav>
+
+        <div class="content">
+            <div id="modifyBanner" class="modify-banner">
+                You are modifying an existing booking. Select a new slot to swap. 
+                <button onclick="cancelModify()" style="margin-left:10px; padding:5px 10px; cursor:pointer;">Cancel</button>
+            </div>
+            <h2>Make a New Booking</h2>
+            <p>Select a date and resource category to view availability and make your booking.</p>
+
+            <!-- Admin-only Manage Bookings Button -->
+            <div class="admin-only" style="display:none; margin-bottom: 20px;">
+                <button id="manage-bookings-btn" class="manage-resources-btn" onclick="toggleManageMode()">
+                    Manage Bookings (Block/Unblock for Maintenance)
+                </button>
+            </div>
+
+            <!-- Booking Controls -->
+            <div class="booking-controls">
+                <div class="control-group">
+                    <label for="dateSelect">Select Date:</label>
+                    <input type="date" id="dateSelect" onchange="onDateChange()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="categorySelect">Resource Category:</label>
+                    <select id="categorySelect" onchange="onCategoryChange()">
+                        <option value="all">All Resources</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <button class="refresh-btn" onclick="refreshGrid()">Refresh</button>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #d4edda;"></div>
+                    <span>Available (click to book)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #f8d7da;"></div>
+                    <span>Booked</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #fff3cd;"></div>
+                    <span>Maintenance</span>
+                </div>
+            </div>
+
+            <!-- Availability Grid -->
+            <div class="availability-grid">
+                <div id="availabilityGrid" class="loading">
+                    Loading availability...
+                </div>
+            </div>
+
+            <!-- Back to Bookings -->
+            <div style="text-align: center; margin: 40px 0;">
+                <button onclick="window.location.href='bookings.html'" style="background-color: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 16px;">
+                    Back to My Bookings
+                </button>
+            </div>
+        </div>
+
+        <!-- Booking Modal -->
+        <div id="bookingModal" class="booking-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Confirm Booking</h3>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Resource:</strong> <span id="modalResourceName"></span></p>
+                    <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                    <p><strong>Time:</strong> <span id="modalTime"></span></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookingPurpose">Purpose of Booking:</label>
+                    <textarea id="bookingPurpose" placeholder="e.g., Group study session, team meeting, project work..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookingContact">Contact Information:</label>
+                    <input type="text" id="bookingContact" placeholder="Email or phone number for this booking">
+                </div>
+
+                <div class="modal-buttons">
+                    <button class="btn-secondary" onclick="closeBookingModal()">Cancel</button>
+                    <button class="btn-primary" onclick="submitBooking()">Confirm Booking</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Contact Us:</p>
+            <ul class="contact_list">
+                <li>514-848-2424</li>
+                <li>csshelp@concordia.ca</li>
+                <li>1455 De Maisonneuve Blvd. W. Montreal</li>
+            </ul>
+
+            <p>&copy Team SOEN 2025</p>
+        </footer>
+        
+    </body>
+
+</html>

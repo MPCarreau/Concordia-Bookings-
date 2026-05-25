@@ -1,0 +1,140 @@
+[
+  {
+    "results": [
+      {
+        "id": 1,
+        "first_name": "Admin",
+        "last_name": "User",
+        "email": "michaelkauzman2001@gmail.com",
+        "phone_number": "514-848-2424",
+        "password_hash": "4655d1b973875abc3e57bfa0254e547024a80052c1f31cbf0b4971d403a565c9",
+        "role": "admin",
+        "email_verified": 1,
+        "email_verified_at": "2025-09-30 18:55:23",
+        "created_at": "2025-09-30 18:55:23",
+        "updated_at": "2025-10-27 22:42:10"
+      },
+      {
+        "id": 2,
+        "first_name": "Staff",
+        "last_name": "Member",
+        "email": "staff@concordia.ca",
+        "phone_number": "514-848-2425",
+        "password_hash": "$2b$10$yT8y3O.KuEVrPqhDKZQqCY3qQjZhKQXoYqoJ5T.6rKUOKLqfWdqE.",
+        "role": "staff",
+        "email_verified": 1,
+        "email_verified_at": "2025-09-30 18:55:23",
+        "created_at": "2025-09-30 18:55:23",
+        "updated_at": "2025-09-30 18:55:23"
+      },
+      {
+        "id": 5,
+        "first_name": "Michael",
+        "last_name": "Kauzman",
+        "email": "cb2333482@icloud.com",
+        "phone_number": "514-123-4567",
+        "password_hash": "4655d1b973875abc3e57bfa0254e547024a80052c1f31cbf0b4971d403a565c9",
+        "role": "student",
+        "email_verified": 1,
+        "email_verified_at": "2025-09-30 20:12:34",
+        "created_at": "2025-09-30 20:12:34",
+        "updated_at": "2025-10-01 16:28:48"
+      },
+      {
+        "id": 6,
+        "first_name": "nab",
+        "last_name": "kauzman",
+        "email": "nkauzman@hotmail.com",
+        "phone_number": "5145142323",
+        "password_hash": "4655d1b973875abc3e57bfa0254e547024a80052c1f31cbf0b4971d403a565c9",
+        "role": "student",
+        "email_verified": 1,
+        "email_verified_at": "2025-09-30 21:20:09",
+        "created_at": "2025-09-30 21:20:09",
+        "updated_at": "2025-10-25 19:38:11"
+      },
+      {
+        "id": 7,
+        "first_name": "Dafan",
+        "last_name": "Ho",
+        "email": "phoenix93127@gmail.com",
+        "phone_number": "9998887777",
+        "password_hash": "daaad6e5604e8e17bd9f108d91e26afe6281dac8fda0091040a7a6d7bd9b43b5",
+        "role": "admin",
+        "email_verified": 1,
+        "email_verified_at": "2025-10-12 16:00:32",
+        "created_at": "2025-10-12 16:00:32",
+        "updated_at": "2025-11-11 21:03:47"
+      },
+      {
+        "id": 8,
+        "first_name": "micah",
+        "last_name": "carreau",
+        "email": "micahpcarreau@hotmail.com",
+        "phone_number": "514-777-7777",
+        "password_hash": "236fc9535885122ea6961f2e9fd26d6a44875bc6a3169fcc78378d0dde709b53",
+        "role": "admin",
+        "email_verified": 1,
+        "email_verified_at": "2025-10-13 20:20:32",
+        "created_at": "2025-10-13 20:20:32",
+        "updated_at": "2025-10-17 01:18:34"
+      },
+      {
+        "id": 9,
+        "first_name": "Nad",
+        "last_name": "G",
+        "email": "nadezhdagagnon@gmail.com",
+        "phone_number": "5147755305",
+        "password_hash": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+        "role": "admin",
+        "email_verified": 1,
+        "email_verified_at": "2025-10-14 22:19:35",
+        "created_at": "2025-10-14 22:19:35",
+        "updated_at": "2025-10-25 20:08:33"
+      },
+      {
+        "id": 10,
+        "first_name": "test",
+        "last_name": "account",
+        "email": "zeusdoor242@hotmail.com",
+        "phone_number": "55555555555",
+        "password_hash": "0e3246dc869aa660163b186fbf002393d2405f322660341d2c666fd0c8362143",
+        "role": "student",
+        "email_verified": 1,
+        "email_verified_at": "2025-10-22 20:16:17",
+        "created_at": "2025-10-22 20:16:17",
+        "updated_at": "2025-10-22 20:16:17"
+      },
+      {
+        "id": 21,
+        "first_name": "Daf",
+        "last_name": "Hen",
+        "email": "h_dafan@live.concordia.ca",
+        "phone_number": "123-123-1234",
+        "password_hash": "8f85f3c1d824a9be4376c6a13bcf6a8296b96dbc1c84d01ff00a5d55004af65f",
+        "role": "student",
+        "email_verified": 1,
+        "email_verified_at": "2025-10-28 21:32:36",
+        "created_at": "2025-10-28 21:32:36",
+        "updated_at": "2025-10-28 21:32:36"
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "ENAM",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 0.4244
+      },
+      "duration": 0.4244,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 184320,
+      "rows_read": 9,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]

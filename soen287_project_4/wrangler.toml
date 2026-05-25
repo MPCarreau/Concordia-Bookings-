@@ -1,0 +1,34 @@
+name = "soen287-project-2"
+main = "src/worker.js"
+compatibility_date = "2024-12-01"
+account_id = "d6c60968c7730ef4cfd7196543cb17e6"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "db-soen287-1"
+database_id = "6ac657c4-ec30-41a3-bd20-d3954478c161"  # You'll need to get this from Cloudflare dashboard
+
+# Variables for your application
+[vars]
+ENVIRONMENT = "production"
+  BASE_URL = "https://soen287-project-2.pages.dev"
+
+# Email service secrets (optional - MailChannels doesn't require these)
+# Add these as secrets using: wrangler secret put SENDGRID_API_KEY
+# [secrets]
+# SENDGRID_API_KEY = "your-sendgrid-api-key"
+# RESEND_API_KEY = "your-resend-api-key"
+
+# Build configuration
+[build]
+command = ""
+
+# For local development
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "db-soen287-1"
+database_id = "6ac657c4-ec30-41a3-bd20-d3954478c161"

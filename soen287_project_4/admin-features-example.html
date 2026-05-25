@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Features Example - Concordia Student Services</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    
+    <style>
+        /* Style for admin-only sections */
+        .admin-only {
+            display: none; /* Hidden by default */
+            background-color: #fff3cd;
+            border: 2px solid #856404;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .admin-badge {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+    </style>
+    
+    <script>
+        // Check if user is admin and show/hide admin features
+        function initializeAdminFeatures() {
+            const userSession = localStorage.getItem('userSession');
+            
+            if (userSession) {
+                try {
+                    const user = JSON.parse(userSession);
+                    console.log('User logged in:', user);
+                    console.log('Is Admin:', user.isAdmin);
+                    
+                    // If user is admin, show all admin-only sections
+                    if (user.isAdmin === true) {
+                        const adminElements = document.querySelectorAll('.admin-only');
+                        adminElements.forEach(element => {
+                            element.style.display = 'block';
+                        });
+                        
+                        // Add admin badge to header
+                        const header = document.querySelector('header h1');
+                        if (header && !document.querySelector('.admin-badge')) {
+                            const badge = document.createElement('span');
+                            badge.className = 'admin-badge';
+                            badge.textContent = 'ADMIN';
+                            header.appendChild(badge);
+                        }
+                        
+                        console.log('Admin features enabled');
+                    } else {
+                        console.log('Regular user - admin features hidden');
+                    }
+                } catch (error) {
+                    console.error('Error parsing user session:', error);
+                }
+            } else {
+                console.log('No user logged in');
+            }
+        }
+        
+        // Helper function to check if user is admin (can be used anywhere)
+        function isUserAdmin() {
+            const userSession = localStorage.getItem('userSession');
+            if (!userSession) return false;
+            
+            try {
+                const user = JSON.parse(userSession);
+                return user.isAdmin === true;
+            } catch (error) {
+                return false;
+            }
+        }
+        
+        // Example: Admin-only action
+        function deleteUser(userId) {
+            if (!isUserAdmin()) {
+                alert('Access denied: Admin privileges required');
+                return;
+            }
+            
+            // Proceed with admin action
+            console.log('Admin action: Deleting user', userId);
+            alert('User deleted (admin action)');
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', initializeAdminFeatures);
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Concordia Student Services</h1>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a> |
+        <a href="profile.html">Profile</a> |
+        <a href="resources.html">Resources</a> |
+        <a href="bookings.html">Bookings</a> |
+        <a href="login.html">Login</a>
+    </nav>
+
+    <div class="content">
+        <h2>Example: Admin Features</h2>
+        
+        <!-- This section is visible to everyone -->
+        <div style="background-color: #d4edda; padding: 15px; margin: 20px 0; border-radius: 5px;">
+            <h3>Public Section</h3>
+            <p>This content is visible to all users.</p>
+        </div>
+        
+        <!-- This section is ONLY visible to admins -->
+        <div class="admin-only">
+            <h3>🔒 Admin Dashboard</h3>
+            <p>This content is only visible to administrators!</p>
+            
+            <h4>Admin Actions:</h4>
+            <ul>
+                <li><button onclick="alert('View all users')">View All Users</button></li>
+                <li><button onclick="alert('Manage Resources')">Manage Resources</button></li>
+                <li><button onclick="deleteUser(123)">Delete User (with permission check)</button></li>
+                <li><button onclick="alert('View Statistics')">View Statistics</button></li>
+            </ul>
+        </div>
+        
+        <!-- Another admin-only section -->
+        <div class="admin-only">
+            <h3>📊 Admin Statistics</h3>
+            <p>Total Users: 150</p>
+            <p>Total Bookings: 45</p>
+            <p>Pending Verifications: 3</p>
+        </div>
+        
+        <!-- Mixed content example -->
+        <div style="background-color: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 5px;">
+            <h3>Bookings</h3>
+            <p>Your upcoming bookings will appear here.</p>
+            
+            <!-- Admin-only button within regular section -->
+            <button class="admin-only" style="background-color: #dc3545; color: white;">
+                View All Users' Bookings
+            </button>
+        </div>
+        
+        <hr>
+        
+        <h3>How to Use:</h3>
+        <ol>
+            <li>Add class <code>admin-only</code> to any element you want to hide from non-admins</li>
+            <li>The <code>initializeAdminFeatures()</code> function runs on page load</li>
+            <li>It checks <code>user.isAdmin</code> from localStorage</li>
+            <li>If true, it shows all <code>.admin-only</code> elements</li>
+            <li>Use <code>isUserAdmin()</code> function to check admin status in your code</li>
+        </ol>
+    </div>
+
+    <footer>
+        <p>Contact Us:</p>
+        <ul class="contact_list">
+            <li>514-848-2424</li>
+            <li>csshelp@concordia.ca</li>
+            <li>1455 De Maisonneuve Blvd. W. Montreal</li>
+        </ul>
+        <p>&copy Team SOEN 2025</p>
+    </footer>
+</body>
+</html>

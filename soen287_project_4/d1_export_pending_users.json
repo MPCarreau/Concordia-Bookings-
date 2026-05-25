@@ -1,0 +1,35 @@
+[
+  {
+    "results": [
+      {
+        "id": 30,
+        "first_name": "micah",
+        "last_name": "c",
+        "email": "m_carrea@live.concordia.ca",
+        "phone_number": "514-777-7778",
+        "password_hash": "0dbfa14d167609872829b3a404a97b220f09fa7d1309b03b778522147cbcc001",
+        "verification_token": "e922b2ce0a06794833b5870de5252bb5b3278ff04b5f1abfd89c3aebee022fa5",
+        "role": "student",
+        "created_at": "2025-10-28 19:51:57",
+        "expires_at": "2025-10-29T19:51:57.893Z"
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "ENAM",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 0.2383
+      },
+      "duration": 0.2383,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 184320,
+      "rows_read": 1,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]

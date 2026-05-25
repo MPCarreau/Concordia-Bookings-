@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Concordia Student Services</title>
+        <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+        <link rel="stylesheet" href="static/style.css"> 
+    <script type="text/javascript" src="darkmode.js" defer> </script>
+    <script type="text/javascript" src="backend/scripts.js"></script>
+    <script type="text/javascript" src="src/profile-dropdown-component.js" defer></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        
+        <script>
+            function checkAuthentication() {
+                // Check for regular user session first
+                const userSession = localStorage.getItem('userSession');
+                const adminSession = localStorage.getItem('adminSession');
+                
+                let user = null;
+                
+                // Try to parse user session
+                if (userSession) {
+                    try {
+                        user = JSON.parse(userSession);
+                        user.sessionType = 'user';
+                    } catch (error) {
+                        localStorage.removeItem('userSession');
+                    }
+                }
+                
+                // Try to parse admin session if no user session
+                if (!user && adminSession) {
+                    try {
+                        const adminData = JSON.parse(adminSession);
+                        // Convert admin session to user format for profile display
+                        user = {
+                            userId: adminData.userId,
+                            email: adminData.email,
+                            firstName: adminData.firstName || 'Admin',
+                            lastName: adminData.lastName || 'User',
+                            phoneNumber: adminData.phoneNumber || '',
+                            sessionType: 'admin',
+                            isAdmin: true
+                        };
+                    } catch (error) {
+                        localStorage.removeItem('adminSession');
+                    }
+                }
+                
+                return user;
+            }
+
+            function loadUserProfile() {
+                const user = checkAuthentication();
+                
+                if (!user) {
+                    showNotSignedInState();
+                    return;
+                }
+
+                // Update username display
+                const usernameDisplay = document.querySelector('#avatar p');
+                if (usernameDisplay) {
+                    usernameDisplay.textContent = `${user.firstName} ${user.lastName}`;
+                }
+
+                // Update profile fields
+                const firstNameInput = document.querySelector('input[data-field="firstName"]');
+                if (firstNameInput) {
+                    firstNameInput.value = user.firstName;
+                }
+
+                const lastNameInput = document.querySelector('input[data-field="lastName"]');
+                if (lastNameInput) {
+                    lastNameInput.value = user.lastName;
+                }
+
+                const emailInput = document.querySelector('input[data-field="email"]');
+                if (emailInput) {
+                    emailInput.value = user.email;
+                }
+
+                const phoneInput = document.querySelector('input[data-field="phoneNumber"]');
+                if (phoneInput) {
+                    phoneInput.value = user.phoneNumber || '';
+                    if (!user.phoneNumber) {
+                        phoneInput.placeholder = 'No phone number set';
+                    }
+                }
+            }
+
+            function showNotSignedInState() {
+                // Hide profile content and show login prompt
+                const profileBox = document.getElementById('profile_box');
+                profileBox.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <h3>Not Signed In</h3>
+                        <p>Please log in to view and edit your profile.</p>
+                        <button onclick="window.location.href='login.html'" style="padding: 12px 24px; background-color: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Go to Login</button>
+                    </div>
+                `;
+                
+            }
+
+            let originalValues = {};
+            let isEditMode = false;
+
+            function toggleEditMode() {
+                isEditMode = !isEditMode;
+                const inputs = document.querySelectorAll('#contact_info input');
+                const editBtn = document.getElementById('edit-btn');
+                const deleteBtn = document.getElementById('delete-btn');
+                const saveBtn = document.getElementById('save-btn');
+                const cancelBtn = document.getElementById('cancel-btn');
+
+                if (isEditMode) {
+                    // Store original values
+                    inputs.forEach(input => {
+                        originalValues[input.dataset.field] = input.value;
+                        input.removeAttribute('readonly');
+                        input.style.backgroundColor = '#fff';
+                        input.style.border = '1px solid #ccc';
+                        input.style.cursor = 'text';
+                    });
+                    
+                    // Keep email readonly for security
+                    const emailInput = document.querySelector('input[data-field="email"]');
+                    if (emailInput) {
+                        emailInput.setAttribute('readonly', 'readonly');
+                        emailInput.style.backgroundColor = '#f5f5f5';
+                        emailInput.style.cursor = 'default';
+                    }
+                    
+                    editBtn.style.display = 'none';
+                    deleteBtn.style.display = 'none';
+                    saveBtn.style.display = 'inline-block';
+                    cancelBtn.style.display = 'inline-block';
+                } else {
+                    // Revert to readonly
+                    inputs.forEach(input => {
+                        input.setAttribute('readonly', 'readonly');
+                        input.style.backgroundColor = '#f5f5f5';
+                        input.style.border = '1px solid #ddd';
+                        input.style.cursor = 'default';
+                    });
+                    
+                    editBtn.style.display = 'inline-block';
+                    deleteBtn.style.display = 'inline-block';
+                    saveBtn.style.display = 'none';
+                    cancelBtn.style.display = 'none';
+                }
+            }
+
+            function cancelEdit() {
+                // Restore original values
+                Object.keys(originalValues).forEach(field => {
+                    const input = document.querySelector(`input[data-field="${field}"]`);
+                    if (input) {
+                        input.value = originalValues[field];
+                    }
+                });
+                
+                toggleEditMode();
+            }
+
+            async function saveProfile() {
+                const user = checkAuthentication();
+                if (!user) return;
+
+                const firstNameInput = document.querySelector('input[data-field="firstName"]');
+                const lastNameInput = document.querySelector('input[data-field="lastName"]');
+                const phoneInput = document.querySelector('input[data-field="phoneNumber"]');
+
+                const updatedData = {
+                    firstName: firstNameInput.value.trim(),
+                    lastName: lastNameInput.value.trim(),
+                    phoneNumber: phoneInput.value.trim()
+                };
+
+                // Validation
+                if (!updatedData.firstName || !updatedData.lastName) {
+                    alert('First name and last name are required.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('https://soen287project4-production.up.railway.app/api/update-profile', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: user.email, // Use email as identifier
+                            ...updatedData
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Update the appropriate session storage
+                        const updatedUser = {
+                            ...user,
+                            ...updatedData
+                        };
+                        
+                        if (user.sessionType === 'admin') {
+                            localStorage.setItem('adminSession', JSON.stringify(updatedUser));
+                        } else {
+                            localStorage.setItem('userSession', JSON.stringify(updatedUser));
+                        }
+                        
+                        // Update avatar display
+                        const usernameDisplay = document.querySelector('#avatar p');
+                        if (usernameDisplay) {
+                            usernameDisplay.textContent = `${updatedUser.firstName} ${updatedUser.lastName}`;
+                        }
+                        
+                        alert('Profile updated successfully!');
+                        toggleEditMode();
+                    } else {
+                        alert('Error updating profile: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('Profile update error:', error);
+                    alert('Failed to update profile. Please try again.');
+                }
+            }
+
+            async function deleteAccount() {
+                //prompt user email confirmation
+                const emailconfirm = window.prompt("If you delete your account, all of your data will be deleted permanently without possibility of recovery. Please enter your email to confirm account deletion: ")
+                
+                //fetch user info
+                const user = checkAuthentication();
+                //fetch stored user email
+                const useremail = user.email
+
+                //check if stored user email exists
+                if (!useremail){
+                    alert('User email not found. Account deletion cancelled.')
+                    return;
+                }
+
+                //check if email prompt is empty
+                if (!emailconfirm) {
+                    alert('No email was entered. Account deletion cancelled.');
+                    return;
+                }
+
+                //compare stored email to prompt email
+                if (emailconfirm.trim().toLowerCase() !== useremail.trim().toLowerCase()){
+                    alert('The email you entered does not match your email. Account deletion Cancelled.')
+                    return;
+                }
+
+                //below runs if user email exists, user entered email, and emails match
+
+                //call delete account api
+                try{
+                    const response = await fetch('https://soen287project4-production.up.railway.app/api/delete-account', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: useremail })
+                        });
+
+                    const result = await response.JSON();
+
+                    //if account deleted successfully
+                    if (result.success){
+                        alert('Account deleted successfully.')
+
+                        //delete local account info
+                        localStorage.removeItem('userSession');
+                        localStorage.removeItem('adminSession');
+
+                        //redirect user
+                        window.location.href = "/index.html";
+                    }
+                    //if deletion failed
+                    else if (!response.ok || !result.success){
+                        alert('Account deletion failed. ', result.error)
+                        return;
+                    }
+                }
+                catch (error){
+                    alert("Account deletion unsuccessful.");
+                    console.error("Delete account request failed:", error);
+                }
+
+                
+            }
+
+
+
+            // Load user profile when page loads
+            window.addEventListener('DOMContentLoaded', loadUserProfile);
+        </script>
+    </head>
+    <body>
+        
+        <header>
+            <h1>Concordia Student Services</h1>
+               <!-- Dark Mode Button -->
+            <button id="theme-switch">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
+
+            </button>
+        </header>
+
+        <nav>
+            <a href="index.html">Home</a> |
+            <span class="auth-only"><a href="profile.html">Profile</a> |</span>
+            <a href="resources.html">Resources</a> |
+            <span class="auth-only"><a href="bookings.html">Bookings</a> |</span>
+            <span class="auth-only" ><a href="bookingRequests.html"> Booking Requests </a> |</span>
+            <span class="admin-only" style="display:none;"><a href="statistics.html">Statistics</a> |</span>
+            <span class="admin-only" style="display:none;"><a href="adminSchedule.html">Schedule Management</a></span>
+        </nav>
+        <script>
+        // Hide register block when logged in and show admin-only elements for admins
+        document.addEventListener('DOMContentLoaded', function() {
+            const userSession = localStorage.getItem('userSession');
+            const adminSession = localStorage.getItem('adminSession');
+            const registerBlock = document.getElementById('registerBlock');
+            
+            // Hide register block if logged in
+            if (userSession && registerBlock) {
+                registerBlock.style.display = 'none';
+            } else if (registerBlock) {
+                registerBlock.style.display = '';
+            }
+            
+            // Show admin-only elements for admins
+            let isAdmin = false;
+            const session = userSession || adminSession;
+            if (session) {
+                try {
+                    const user = JSON.parse(session);
+                    if (user && user.isAdmin === true) {
+                        isAdmin = true;
+                    }
+                } catch (e) {
+                    // ignore JSON parse errors
+                }
+            }
+            document.querySelectorAll('.admin-only').forEach(function(el) {
+                el.style.display = isAdmin ? '' : 'none';
+            });
+        });
+        </script>
+
+        <div class="content">
+            <h3>Your Profile</h3>
+
+            <div id="profile_box" style="max-width: 600px; width: 90%; margin: 0 auto;">
+
+                <div id="avatar">
+                    <img src="images/cat_smiling.jpg" alt="Picture of a smiling cat" width="75" height="75">
+                    <p>user123</p>
+                </div>
+
+                <p>Your Contact Information</p>
+                <ul id="contact_info" style="list-style: none; padding: 20px; margin: 0; background-color: #ffffff; border: 1px solid #ddd; border-radius: 8px; width: 90%; max-width: 800px; margin: 20px auto;">
+                    <li style="margin-bottom: 15px;">
+                        <label style="display: block; font-size: 16px; font-weight: 500; margin-bottom: 8px; color: #555;">First Name</label>
+                        <input type="text" data-field="firstName" placeholder="Loading..." value="" readonly style="background-color: #f5f5f5; border: 1px solid #ddd; cursor: default; width: 100%; min-width: 300px; padding: 12px 15px; font-size: 16px; border-radius: 4px; box-sizing: border-box; display: block;">
+                    </li>
+                    <li style="margin-bottom: 15px;">
+                        <label style="display: block; font-size: 16px; font-weight: 500; margin-bottom: 8px; color: #555;">Last Name</label>
+                        <input type="text" data-field="lastName" placeholder="Loading..." value="" readonly style="background-color: #f5f5f5; border: 1px solid #ddd; cursor: default; width: 100%; min-width: 300px; padding: 12px 15px; font-size: 16px; border-radius: 4px; box-sizing: border-box; display: block;">
+                    </li>
+                    <li style="margin-bottom: 15px;">
+                        <label style="display: block; font-size: 16px; font-weight: 500; margin-bottom: 8px; color: #555;">Email</label>
+                        <input type="email" data-field="email" placeholder="Loading..." value="" readonly style="background-color: #f5f5f5; border: 1px solid #ddd; cursor: default; width: 100%; min-width: 350px; padding: 12px 15px; font-size: 16px; border-radius: 4px; box-sizing: border-box; display: block;">
+                    </li>
+                    <li style="margin-bottom: 15px;">
+                        <label style="display: block; font-size: 16px; font-weight: 500; margin-bottom: 8px; color: #555;">Personal Phone Number</label>
+                        <input type="text" data-field="phoneNumber" placeholder="Loading..." value="" readonly style="background-color: #f5f5f5; border: 1px solid #ddd; cursor: default; width: 100%; min-width: 250px; padding: 12px 15px; font-size: 16px; border-radius: 4px; box-sizing: border-box; display: block;">
+                    </li>
+                    <li style="margin-bottom: 15px;">
+                        <a href="forgot-password.html" style="color: #0056b3; text-decoration: none;" onmouseover="this.style.color='#007bff';" onmouseout="this.style.color='#0056b3';">Reset Password</a>
+                    </li>
+                </ul>
+                
+                <div class="profile-buttons" style="text-align: center; margin: 20px 0;">
+                    <button id="edit-btn" onclick="toggleEditMode()" style="margin-right: 10px; padding: 10px 20px; background-color: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer;">Edit Profile</button>
+                    <button id="delete-btn" onclick="deleteAccount()" style="margin-right: 10px; padding: 10px 20px; background-color: #e11a1a; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete Account</button>
+                    <button id="save-btn" onclick="saveProfile()" style="display: none; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Save Changes</button>
+                    <button id="cancel-btn" onclick="cancelEdit()" style="display: none; margin-left: 10px; padding: 10px 20px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            <p>Contact Us:</p>
+            <ul class="contact_list">
+                <li>514-848-2424</li>
+                <li>csshelp@concordia.ca</li>
+                <li>1455 De Maisonneuve Blvd. W. Montreal</li>
+            </ul>
+
+            <p>&copy Team SOEN 2025</p>
+        </footer>
+        
+    </body>
+
+</html>

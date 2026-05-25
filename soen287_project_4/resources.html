@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Concordia Student Services - Resources</title>
+        <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+        
+        <link rel="stylesheet" href="static/style.css"> 
+        <script type="text/javascript" src="darkmode.js" defer> </script>
+        <script type="text/javascript" src="backend/scripts.js"></script>
+        <script type="text/javascript" src="src/profile-dropdown-component.js" defer></script>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        
+        <script>
+            // Only show .admin-only sections for admins
+            document.addEventListener('DOMContentLoaded', function() {
+                let isAdmin = false;
+                const session = localStorage.getItem('userSession') || localStorage.getItem('adminSession');
+                if (session) {
+                    try {
+                        const user = JSON.parse(session);
+                        if (user && user.isAdmin === true) {
+                            isAdmin = true;
+                        }
+                    } catch (e) {
+                        // ignore JSON parse errors; default hides admin-only
+                    }
+                }
+                document.querySelectorAll('.admin-only').forEach(function(el) {
+                    el.style.display = isAdmin ? '' : 'none';
+                });
+            });
+        </script>
+        
+        <script>
+            // Only show .admin-only sections for admins
+            document.addEventListener('DOMContentLoaded', function() {
+                let isAdmin = false;
+                const session = localStorage.getItem('userSession') || localStorage.getItem('adminSession');
+                if (session) {
+                    try {
+                        const user = JSON.parse(session);
+                        if (user && user.isAdmin === true) {
+                            isAdmin = true;
+                        }
+                    } catch (e) {
+                        // ignore JSON parse errors; default hides admin-only
+                    }
+                }
+                document.querySelectorAll('.admin-only').forEach(function(el) {
+                    el.style.display = isAdmin ? '' : 'none';
+                });
+            });
+        </script>
+    </head>
+    <body>
+        
+        <header>
+            <h1>Concordia Student Services</h1>
+             <!-- Dark Mode Button -->
+            <button id="theme-switch">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
+
+            </button>
+        </header>
+
+        <nav>
+            <a href="index.html">Home</a> |
+            <span class="auth-only"><a href="profile.html">Profile</a> |</span>
+            <a href="resources.html">Resources</a> |
+            <span class="auth-only"><a href="bookings.html">Bookings</a> |</span>
+            <span class="auth-only"><a href="bookingRequests.html">Booking Requests</a> |</span>
+            <span class="admin-only" style="display:none;"><a href="statistics.html">Statistics</a> |</span>
+            <span class="admin-only" style="display:none;"><a href="adminSchedule.html">Schedule Management</a></span>
+        </nav>
+        <script>
+        // Hide auth-only links when no session is detected (logged out)
+        window.addEventListener('DOMContentLoaded', function() {
+            const session = localStorage.getItem('userSession') || localStorage.getItem('adminSession');
+            document.querySelectorAll('.auth-only').forEach(function(el) {
+                el.style.display = session ? '' : 'none';
+            });
+        });
+        </script>
+
+         <!-- Another admin-only section -->
+        <div class="admin-only" style="display:none;">
+        </br>
+            <button id="manage-resources-btn" class="manage-resources-btn">Manage Resources (Create/Edit/Remove)</button>
+        </div>
+        <div class="content">
+            <h3>Available Resources</h3>
+            <p>Browse our available resources for booking and reservation.</p>
+
+            <div class="resource-section">
+                <h4>Study Rooms</h4>
+                <ul>
+                    <li><strong>Small Study Room A</strong> - Capacity: 4 people, Location: Library 2nd floor</li>
+                    <li><strong>Small Study Room B</strong> - Capacity: 4 people, Location: Library 2nd floor</li>
+                    <li><strong>Medium Study Room C</strong> - Capacity: 8 people, Location: Library 3rd floor</li>
+                    <li><strong>Large Study Room D</strong> - Capacity: 12 people, Location: Library 3rd floor</li>
+                </ul>
+            </div>
+
+  
+
+
+            <div class="resource-section">
+                <h4>Computer Labs</h4>
+                <ul>
+                    <li><strong>Computer Lab 1</strong> - 20 workstations, Location: EV Building, Room 001</li>
+                    <li><strong>Computer Lab 2</strong> - 30 workstations, Location: EV Building, Room 002</li>
+                    <li><strong>Mac Lab</strong> - 15 Mac workstations, Location: EV Building, Room 102</li>
+                    <li><strong>Engineering Lab</strong> - 25 specialized workstations, Location: EV Building, Room 201</li>
+                </ul>
+            </div>
+
+            <div class="resource-section">
+                <h4>Meeting Rooms</h4>
+                <ul>
+                    <li><strong>Conference Room A</strong> - Capacity: 20 people, Projector, Whiteboard</li>
+                    <li><strong>Conference Room B</strong> - Capacity: 15 people, Video conferencing equipment</li>
+                    <li><strong>Seminar Room</strong> - Capacity: 30 people, Presentation equipment</li>
+                    <li><strong>Board Room</strong> - Capacity: 12 people, Executive meeting space</li>
+                </ul>
+            </div>
+
+            <div class="resource-section">
+                <h4>Equipment</h4>
+                <ul>
+                    <li><strong>Laptops</strong> - Available for short-term loan</li>
+                    <li><strong>Projectors</strong> - Portable presentation equipment</li>
+                    <li><strong>Cameras</strong> - Digital cameras for student projects</li>
+                    <li><strong>Audio Equipment</strong> - Microphones, speakers, recording equipment</li>
+                </ul>
+            </div>
+
+            <div class="resource-section">
+                <h4>Specialized Facilities</h4>
+                <ul>
+                    <li><strong>3D Printing Lab</strong> - Location: EV Building, Room 301</li>
+                    <li><strong>Electronics Workshop</strong> - Location: EV Building, Room 302</li>
+                    <li><strong>Maker Space</strong> - General workshop area, Location: EV Building, Room 303</li>
+                    <li><strong>Photography Studio</strong> - Professional lighting and equipment</li>
+                </ul>
+            </div>
+
+            <p><strong>Note:</strong> To book any of these resources, please log in to your account and visit the <a href="bookings.html">Bookings</a> page.</p>
+            
+            <div style="text-align: center; margin: 40px 0;">
+                <button onclick="window.location.href='makeBooking.html'" style="background-color: #007cba; color: white; border: none; padding: 15px 30px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 8px rgba(0, 124, 186, 0.3); transition: all 0.3s ease;">
+                    Make a Booking
+                </button>
+            </div>
+            
+            <p>For more information about specific resources or assistance with bookings, please contact our support team.</p>
+        </div>
+
+        <footer>
+            <p>Contact Us:</p>
+            <ul class="contact_list">
+                <li>514-848-2424</li>
+                <li>csshelp@concordia.ca</li>
+                <li>1455 De Maisonneuve Blvd. W. Montreal</li>
+            </ul>
+
+            <p>&copy Team SOEN 2025</p>
+        </footer>
+
+        <script>
+        // Admin-only resource editing logic with backend persistence
+        document.addEventListener('DOMContentLoaded', function() {
+            const API_BASE = 'https://soen287project4-production.up.railway.app';
+            
+            const manageBtn = document.getElementById('manage-resources-btn');
+            const content = document.querySelector('.content');
+            
+            let editMode = false;
+            let resourceLists = [];
+
+            // Load resources from backend and render
+            async function loadResources() {
+                try {
+                    const resp = await fetch(`${API_BASE}/api/resources`);
+                    const json = await resp.json();
+                    if (!json.success) throw new Error(json.error || 'Failed to load');
+                    renderResources(json.resources || []);
+                } catch (err) {
+                    console.error('Failed to load resources from API:', err);
+                    alert('Failed to load resources from server. Please refresh the page.');
+                }
+            }
+
+            function renderResources(resources) {
+                // Remove all existing resource sections
+                document.querySelectorAll('.resource-section').forEach(el => el.remove());
+
+                // Group resources by category
+                const groups = {};
+                resources.forEach(r => {
+                    const cat = r.ResCategory || 'Uncategorized';
+                    groups[cat] = groups[cat] || [];
+                    groups[cat].push(r);
+                });
+
+                // Find insertion point (after the first paragraph)
+                const insertAfter = content.querySelector('p');
+                
+                // Create sections for each category
+                Object.keys(groups).sort().forEach(cat => {
+                    const section = document.createElement('div');
+                    section.className = 'resource-section';
+                    const h4 = document.createElement('h4');
+                    h4.textContent = cat;
+                    section.appendChild(h4);
+                    const ul = document.createElement('ul');
+                    groups[cat].forEach(r => {
+                        const li = document.createElement('li');
+                        li.dataset.id = r.id;
+                        const parts = (r.ResName || '').split(/\s*-\s*/, 2);
+                        let html = '<strong>' + (parts[0] || '') + '</strong>';
+                        if (parts.length > 1) html += ' - ' + parts[1];
+                        li.innerHTML = html;
+                        ul.appendChild(li);
+                    });
+                    section.appendChild(ul);
+                    
+                    // Insert after the previous section or after the paragraph
+                    if (insertAfter.nextSibling) {
+                        insertAfter.parentNode.insertBefore(section, insertAfter.nextSibling);
+                    } else {
+                        insertAfter.parentNode.appendChild(section);
+                    }
+                });
+
+                resourceLists = Array.from(document.querySelectorAll('.resource-section ul'));
+                // If we're currently in edit mode, enable editing for all lists
+                if (editMode) resourceLists.forEach(list => enableResourceEditing(list));
+            }
+
+            // Attach manage button behavior
+            if (manageBtn) {
+                manageBtn.addEventListener('click', function() {
+                    editMode = !editMode;
+                    manageBtn.textContent = editMode ? 'Exit Edit Mode' : 'Manage Resources (Create/Edit/Remove)';
+                    resourceLists.forEach(function(list) {
+                        if (editMode) enableResourceEditing(list);
+                        else disableResourceEditing(list);
+                    });
+                });
+            }
+
+            function enableResourceEditing(list) {
+                Array.from(list.children).forEach(function(li) {
+                    // Remove existing buttons if any
+                    Array.from(li.querySelectorAll('.edit-btn, .delete-btn')).forEach(btn => btn.remove());
+                    
+                    const editBtn = document.createElement('button');
+                    editBtn.textContent = 'Edit';
+                    editBtn.className = 'edit-btn';
+                    editBtn.style.marginLeft = '12px';
+                    editBtn.onclick = async function() {
+                        const currentText = li.textContent.replace(/EditDelete$/, '').trim();
+                        const newText = prompt('Edit resource:', currentText);
+                        if (newText && newText !== currentText) {
+                            const id = li.dataset.id;
+                            const category = list.parentNode.querySelector('h4') ? list.parentNode.querySelector('h4').textContent : 'Uncategorized';
+                            
+                            if (id) {
+                                // Update existing resource
+                                try {
+                                    const resp = await fetch(`${API_BASE}/api/resources/${encodeURIComponent(id)}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ ResCategory: category, ResName: newText })
+                                    });
+                                    const j = await resp.json();
+                                    if (!j.success) throw new Error(j.error || 'Failed to update');
+                                    
+                                    // Reload resources from server to show updated data
+                                    await loadResources();
+                                } catch (err) {
+                                    alert('Failed to update resource on server: ' + err.message);
+                                    console.error(err);
+                                    await loadResources();
+                                }
+                            }
+                        }
+                    };
+
+                    const delBtn = document.createElement('button');
+                    delBtn.textContent = 'Delete';
+                    delBtn.className = 'delete-btn';
+                    delBtn.style.marginLeft = '6px';
+                    delBtn.onclick = async function() {
+                        if (!confirm('Delete this resource?')) return;
+                        const id = li.dataset.id;
+                        
+                        if (id) {
+                            try {
+                                const resp = await fetch(`${API_BASE}/api/resources/${encodeURIComponent(id)}`, { 
+                                    method: 'DELETE' 
+                                });
+                                const j = await resp.json();
+                                if (!j.success) throw new Error(j.error || 'Failed to delete');
+                                
+                                // Reload resources from server to show updated list
+                                await loadResources();
+                            } catch (err) {
+                                alert('Failed to delete resource on server: ' + err.message);
+                                console.error(err);
+                                await loadResources();
+                            }
+                        }
+                    };
+
+                    li.appendChild(editBtn);
+                    li.appendChild(delBtn);
+                });
+
+                // Add "Add Resource" button for the category
+                const existingAddBtn = list.parentNode.querySelector('.add-resource-btn');
+                if (existingAddBtn) existingAddBtn.remove();
+                
+                const addBtn = document.createElement('button');
+                addBtn.textContent = 'Add Resource';
+                addBtn.className = 'add-resource-btn';
+                addBtn.style.marginTop = '10px';
+                addBtn.onclick = async function() {
+                    const newText = prompt('New resource description:');
+                    if (!newText) return;
+                    
+                    const category = list.parentNode.querySelector('h4') ? list.parentNode.querySelector('h4').textContent : 'Uncategorized';
+                    
+                    try {
+                        const resp = await fetch(`${API_BASE}/api/resources`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ResCategory: category, ResName: newText })
+                        });
+                        const j = await resp.json();
+                        if (!j.success) throw new Error(j.error || 'Failed to create');
+                        
+                        // Reload resources from server to show new resource
+                        await loadResources();
+                    } catch (err) {
+                        alert('Failed to save new resource on server: ' + err.message);
+                        console.error(err);
+                        await loadResources();
+                    }
+                };
+                list.parentNode.appendChild(addBtn);
+            }
+
+            function disableResourceEditing(list) {
+                Array.from(list.children).forEach(function(li) {
+                    Array.from(li.querySelectorAll('.edit-btn, .delete-btn')).forEach(function(btn) { btn.remove(); });
+                });
+                const addBtn = list.parentNode.querySelector('.add-resource-btn');
+                if (addBtn) addBtn.remove();
+            }
+
+            // Initial load
+            loadResources();
+        });
+        </script>
+    </body>
+
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Schedule Management - Concordia Student Services</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="stylesheet" href="static/style.css">
+    <script type="text/javascript" src="darkmode.js" defer></script>
+    <script type="text/javascript" src="src/profile-dropdown-component.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    
+    <style>
+        .schedule-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .schedule-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .schedule-section h2 {
+            margin-top: 0;
+            color: var(--red);
+            border-bottom: 2px solid var(--red);
+            padding-bottom: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .list-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Concordia Student Services</h1>
+        <button id="theme-switch">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
+        </button>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a> |
+        <span class="auth-only"><a href="profile.html">Profile</a> |</span>
+        <a href="resources.html">Resources</a> |
+        <span class="auth-only"><a href="bookings.html">Bookings</a> |</span>
+        <span class="auth-only"><a href="bookingRequests.html">Booking Requests</a> |</span>
+        <span class="admin-only" style="display:none;"><a href="statistics.html">Statistics</a> |</span>
+        <span class="admin-only" style="display:none;"><a href="adminSchedule.html">Schedule Management</a></span>
+    </nav>
+
+    <div class="content">
+        <div class="schedule-container">
+            <h1>Schedule Management</h1>
+
+            <div class="schedule-section">
+                <h2>Default Working Hours</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" id="default-start" value="09:00">
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" id="default-end" value="17:00">
+                    </div>
+                    <button class="btn btn-success" onclick="saveWorkingHours()">Save</button>
+                </div>
+            </div>
+
+            <div class="schedule-section">
+                <h2>Schedule Exceptions</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="exception-date">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="exception-desc" placeholder="e.g., Holiday Hours">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" id="exception-start" value="09:00">
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" id="exception-end" value="17:00">
+                    </div>
+                    <button class="btn btn-success" onclick="addException()">Add</button>
+                </div>
+                <div id="exceptions-list"></div>
+            </div>
+
+            <div class="schedule-section">
+                <h2>Blackout Dates</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="blackout-date">
+                    </div>
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <input type="text" id="blackout-reason" placeholder="e.g., Maintenance">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" id="blackout-start" value="09:00">
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" id="blackout-end" value="17:00">
+                    </div>
+                    <button class="btn btn-danger" onclick="addBlackout()">Add</button>
+                </div>
+                <div id="blackout-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Contact Us:</p>
+        <ul class="contact_list">
+            <li>514-848-2424</li>
+            <li>csshelp@concordia.ca</li>
+            <li>1455 De Maisonneuve Blvd. W. Montreal</li>
+        </ul>
+        <p>&copy Team SOEN 2025</p>
+    </footer>
+
+    <script>
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : 'https://soen287project4-production.up.railway.app';
+        let isAdmin = false;
+        let user = null;
+        function checkAuthentication() {
+            const userSession = localStorage.getItem('userSession');
+            const adminSession = localStorage.getItem('adminSession');
+            if (adminSession) {
+                try {
+                    user = JSON.parse(adminSession);
+                    isAdmin = true;
+                } catch (e) {}
+            } else if (userSession) {
+                try {
+                    user = JSON.parse(userSession);
+                    isAdmin = !!user.isAdmin;
+                } catch (e) {}
+            }
+        }
+        function applyAdminVisibility() {
+            document.querySelectorAll('.admin-only').forEach(function(el) {
+                el.style.display = isAdmin ? '' : 'none';
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication()
+            applyAdminVisibility()
+            loadData();
+        });
+
+        async function loadData() {
+            try {
+            const res = await fetch(`${API_BASE}/api/working-hours`);
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('default-start').value = data.hours.start;
+                document.getElementById('default-end').value = data.hours.end;
+            }
+        } catch (e) { console.error(e); }
+            
+            renderExceptions();
+            renderBlackouts();
+        }
+
+        // Called by Save Working Hours button
+        async function saveWorkingHours() {
+            const start = document.getElementById('default-start').value;
+            const end = document.getElementById('default-end').value;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/working-hours`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ start, end })
+                });
+                const data = await res.json();
+                if (data.success) alert('Working hours saved!');
+                else alert('Error saving hours');
+            } catch (e) { alert('Network error'); }
+        }
+
+        // Called by Add Exception button
+        async function addException() {
+            const date = document.getElementById('exception-date').value;
+            const desc = document.getElementById('exception-desc').value;
+            const start = document.getElementById('exception-start').value;
+            const end = document.getElementById('exception-end').value;
+
+            if (!date || !desc) {
+                alert('Please fill in date and description');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/schedule-exceptions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ date, desc, start, end })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('exception-date').value = '';
+                    document.getElementById('exception-desc').value = '';
+                    renderExceptions();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // Renders the list of exceptions under Schedule Exceptions when page loads or new exception is added
+        async function renderExceptions() {
+            try {
+                const res = await fetch(`${API_BASE}/api/schedule-exceptions`);
+                const data = await res.json();
+                const container = document.getElementById('exceptions-list');
+
+                if (!data.success || data.exceptions.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No exceptions</div>';
+                    return;
+                }
+
+                container.innerHTML = data.exceptions.map(ex => `
+                    <div class="list-item">
+                        <div>
+                            <strong>${ex.exception_date.split('T')[0]}</strong> - ${ex.description}<br>
+                            <small>${ex.start_time} - ${ex.end_time}</small>
+                        </div>
+                        <button class="btn btn-danger" onclick="removeException(${ex.id})">Remove</button>
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        // Called by Remove button on exceptions
+        async function removeException(index) {
+            await fetch(`${API_BASE}/api/schedule-exceptions/${index}`, { method: 'DELETE' });
+            renderExceptions();
+        }
+
+        // Called by Add Blackout button
+        async function addBlackout() {
+            const date = document.getElementById('blackout-date').value;
+            const reason = document.getElementById('blackout-reason').value;
+            const start = document.getElementById('blackout-start').value;
+            const end = document.getElementById('blackout-end').value;
+
+            if (!date || !reason) {
+                alert('Please fill in date and reason');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/blackout-dates`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ date, reason, start, end })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('blackout-date').value = '';
+                    document.getElementById('blackout-reason').value = '';
+                    renderBlackouts();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // Renders the list of blackouts under Blackout Dates when page loads or new blackout is added
+        async function renderBlackouts() {
+            try {
+                const res = await fetch(`${API_BASE}/api/blackout-dates`);
+                const data = await res.json();
+                const container = document.getElementById('blackout-list');
+
+                if (!data.success || data.blackouts.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No blackout dates</div>';
+                    return;
+                }
+
+                container.innerHTML = data.blackouts.map(b => `
+                    <div class="list-item">
+                        <div>
+                            <strong>${b.blackout_date.split('T')[0]}</strong> - ${b.reason}<br>
+                            <small>${b.start_time} - ${b.end_time}</small>
+                        </div>
+                        <button class="btn btn-danger" onclick="removeBlackout(${b.id})">Remove</button>
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        // Called by Remove button on blackouts
+        async function removeBlackout(index) {
+            await fetch(`${API_BASE}/api/blackout-dates/${index}`, { method: 'DELETE' });
+            renderBlackouts();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Concordia Student Services</title>
+        <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+        
+        <link rel="stylesheet" href="static/style.css"> 
+    <script type="text/javascript" src="darkmode.js" defer> </script>
+    <script type="text/javascript" src="backend/scripts.js"></script>
+    <script type="text/javascript" src="src/profile-dropdown-component.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+        
+        
+        
+        <script>
+            function togglePassword(fieldId) {
+                const passwordField = document.getElementById(fieldId);
+                const toggleButton = passwordField.nextElementSibling;
+                
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    toggleButton.textContent = 'Hide';
+                } else {
+                    passwordField.type = 'password';
+                    toggleButton.textContent = 'Show';
+                }
+            }
+
+            function validatePasswords() {
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const errorMessage = document.getElementById('password-error');
+                
+                if (confirmPassword === '') {
+                    errorMessage.textContent = '';
+                    errorMessage.style.display = 'none';
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    errorMessage.textContent = 'Passwords above do not match!';
+                    errorMessage.style.display = 'block';
+                } else {
+                    errorMessage.textContent = '';
+                    errorMessage.style.display = 'none';
+                }
+            }
+
+            async function handleRegistration(event) {
+                event.preventDefault();
+                
+                const form = event.target;
+                const formData = new FormData(form);
+                
+                const registrationData = {
+                    firstName: formData.get('firstName'),
+                    lastName: formData.get('lastName'),
+                    email: formData.get('email'),
+                    phoneNumber: formData.get('phoneNumber'),
+                    password: formData.get('password'),
+                    confirmPassword: formData.get('confirmPassword'),
+                    role: formData.get('role')
+                };
+
+                // check email requirements
+                const emailPatterns = ['live\\.concordia\\.ca', 'mail\\.concordia\\.ca', 'encs\\.concordia\\.ca', 'cse\\.concordia\\.ca'];
+                const emailRegex = new RegExp(`@(${emailPatterns.join('|')})$`, 'i'); 
+                if (!emailRegex.test(registrationData.email)) {
+                    showMessage('Email must be a Concordia domain (\'@live.concordia.ca\', \'@mail.concordia.ca\', \'@encs.concordia.ca\', \'@cse.concordia.ca\').', 'error');
+                    return;
+                }
+
+                // Client-side validation
+                if (registrationData.password !== registrationData.confirmPassword) {
+                    showMessage('Passwords do not match!', 'error');
+                    return;
+                }
+
+                // check password requirements
+                const num = /[0-9]/;
+                const sym = /[#?!@$%^&*-]/;
+                if (registrationData.password.length < 8 || !num.test(registrationData.password) ||  !sym.test(registrationData.password)) {
+                    showMessage('Password must containt at least 8 characters, one number, and one special character.', 'error');
+                    return;
+                }
+
+                // Show loading state
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Creating Account...';
+                submitButton.disabled = true;
+
+                try {
+                    const response = await fetch('https://soen287project4-production.up.railway.app/api/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            ...registrationData,
+                            requireEmailVerification: true
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Show verification email sent message
+                        const successMessage = 'Verification Email sent! Please check your mailbox and confirm your account to access Concordia Resources.';
+                        showMessage(successMessage, 'success');
+                        
+                        // Clear the form
+                        form.reset();
+                        
+                        // Hide the form after successful registration
+                        setTimeout(() => {
+                            form.style.display = 'none';
+                            
+                            // Create additional instructions
+                            const instructionsDiv = document.createElement('div');
+                            instructionsDiv.className = 'verification-instructions';
+                            instructionsDiv.innerHTML = `
+                                <h3>Check Your Email</h3>
+                                <p>We've sent a verification link to <strong>${registrationData.email}</strong></p>
+                                <p>Click the link in the email to activate your account and start using Concordia Student Services.</p>
+                                <p><small>Didn't receive the email? Check your spam folder or <a href="register.html" style="color: var(--red); text-decoration: underline;">try again</a>.</small></p>
+                            `;
+                            
+                            const contentDiv = document.querySelector('.content');
+                            contentDiv.appendChild(instructionsDiv);
+                        }, 2000);
+                        
+                    } else {
+                        // Handle specific error cases for existing accounts
+                        if (result.error && result.error.includes('phone number')) {
+                            const errorMessage = 'Phone number already associated with an account, try to <a href="login.html" style="color: #802f2f; text-decoration: underline;">Log in</a> or use <a href="forgot-password.html" style="color: #802f2f; text-decoration: underline;">Forgot Password</a> to retrieve your account.';
+                            showMessage(errorMessage, 'error', true);
+                        } else if (result.error && result.error.includes('email')) {
+                            const errorMessage = 'Email address already associated with an account, try to <a href="login.html" style="color: #802f2f; text-decoration: underline;">Log in</a> or use <a href="forgot-password.html" style="color: #802f2f; text-decoration: underline;">Forgot Password</a> to retrieve your account.';
+                            showMessage(errorMessage, 'error', true);
+                        } else if (result.error && (result.error.includes('already exists') || result.error.includes('already registered'))) {
+                            const errorMessage = 'Account already exists with this information, try to <a href="login.html" style="color: #802f2f; text-decoration: underline;">Log in</a> or use <a href="forgot-password.html" style="color: #802f2f; text-decoration: underline;">Forgot Password</a> to retrieve your account.';
+                            showMessage(errorMessage, 'error', true);
+                        } else {
+                            showMessage(result.error || 'Registration failed. Please try again.', 'error');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    showMessage('Network error. Please check your connection and try again.', 'error');
+                } finally {
+                    // Reset button state
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
+            }
+
+            function showMessage(message, type, includeLinks = false) {
+                // Remove existing messages
+                const existingMessage = document.querySelector('.registration-message');
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
+
+                // Create new message element
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `registration-message ${type}`;
+                
+                if (includeLinks) {
+                    messageDiv.innerHTML = message;
+                } else {
+                    messageDiv.textContent = message;
+                }
+
+                // Insert message after the form
+                const form = document.querySelector('.login_form');
+                form.parentNode.insertBefore(messageDiv, form.nextSibling);
+
+                // Auto-remove success messages after 5 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        if (messageDiv.parentNode) {
+                            messageDiv.remove();
+                        }
+                    }, 5000);
+                }
+            }
+
+            // Add event listeners when page loads
+            window.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('password').addEventListener('input', validatePasswords);
+                document.getElementById('confirmPassword').addEventListener('input', validatePasswords);
+                document.getElementById('registrationForm').addEventListener('submit', handleRegistration);
+            });
+        </script>
+    </head>
+    <body>
+        
+        <header>
+            <h1>Concordia Student Services</h1>
+               <!-- Dark Mode Button -->
+            <button id="theme-switch">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
+
+            </button>
+        </header>
+
+        <nav>
+            <a href="index.html">Home</a> |
+            <span class="auth-only"><a href="profile.html">Profile</a> |</span>
+            <a href="resources.html">Resources</a> |
+            <span class="auth-only"><a href="bookings.html">Bookings</a> |</span>
+            <span class="auth-only"><a href="bookingRequests.html">Booking Requests</a> |</span>
+            <span class="admin-only auth-only" style="display:none;"><a href="statistics.html">Statistics</a> |</span>
+            <span class="admin-only" style="display:none;"><a href="adminSchedule.html">Schedule Management</a></span>
+        </nav>
+        <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            const session = localStorage.getItem('userSession') || localStorage.getItem('adminSession');
+            document.querySelectorAll('.auth-only').forEach(function(link) {
+                link.style.display = session ? '' : 'none';
+            });
+        });
+        </script>
+
+        <div class="content">
+
+            <form id="registrationForm" method="post" class="login_form">
+                <h3>Register</h3>
+
+                <div>
+                    <label>First Name</label>
+                    <input type="text" name="firstName" placeholder="Enter First Name" required>
+                </div>
+
+                <div>
+                    <label>Last Name</label>
+                    <input type="text" name="lastName" placeholder="Enter Last Name" required>
+                </div>
+
+                <div>
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="Enter Email Address" required>
+                </div>
+
+                <div>
+                    <label>Phone Number</label>
+                    <input type="tel" name="phoneNumber" placeholder="Enter Phone Number" required>
+                </div>
+
+                <div class="password-field">
+                    <label>Password</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" placeholder="Enter Password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('password')">Show</button>
+                    </div>
+                </div>
+
+                <div class="password-field">
+                    <label>Confirm Password</label>
+                    <div class="password-container">
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">Show</button>
+                    </div>
+                    <div id="password-error" class="error-message"></div>
+                </div>
+
+                <div class="role-field">
+                    <label>Are you a Student or Staff member?</label>
+                    <div>
+                        <input type="radio" id="role" name="role" value="student" required>
+                        Student
+                        <br>
+                        <input type="radio" id="role" name="role" value="staff">
+                        Staff
+                    </div>
+                </div>
+
+                <button type="submit">Register</button>
+            </form>
+
+        </div>
+
+
+
+        <footer>
+            <p>Contact Us:</p>
+            <ul class="contact_list">
+                <li>514-848-2424</li>
+                <li>csshelp@concordia.ca</li>
+                <li>1455 De Maisonneuve Blvd. W. Montreal</li>
+            </ul>
+
+            <p>&copy Team SOEN 2025</p>
+        </footer>
+        
+    </body>
+
+</html>

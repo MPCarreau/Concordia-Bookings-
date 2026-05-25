@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Statistics - Concordia Student Services</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/style.css">
+    <script type="text/javascript" src="darkmode.js" defer></script>
+    <script type="text/javascript" src="backend/scripts.js"></script>
+    <script type="text/javascript" src="src/profile-dropdown-component.js" defer></script>
+    <style>
+        /* Page-specific styles for statistics */
+        body, html, * {
+            font-family: 'Poppins', sans-serif !important;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            padding: 18px;
+            box-shadow: var(--deepred) 0px 3px 8px;
+        }
+
+        /*
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bar-label {
+            width: 140px;
+            font-weight: 600;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 18px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--blue);
+            width: 0%;
+            border-radius: 10px 0 0 10px;
+            transition: width 800ms ease-out;
+        }*/
+
+        .summary { margin-bottom: 12px; }
+
+        @media (max-width: 800px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .bar-label { width: 120px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Concordia Student Services</h1>
+
+        <!-- Dark Mode Button -->
+        <button id="theme-switch">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
+
+
+        </button>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a> |
+        <a href="profile.html">Profile</a> |
+        <a href="resources.html">Resources</a> |
+        <a href="bookings.html">Bookings</a> |
+        <a href="bookingRequests.html" class="admin-only" style="display:none;">Booking Requests</a> |
+        <a href="statistics.html" id="statisticsNav" style="display:none;">Statistics</a> |
+        <a href="adminSchedule.html" class="admin-only" style="display:none;">Schedule Management</a>
+    </nav>
+
+    <div class="content">
+        <h2>Usage Statistics </h2>
+        <p class="summary">Below are statistics and reports about resource usage.</p>
+
+        <div class="stats-grid">
+            <section class="card">
+                <h3>Most Popular Resources</h3>
+                <p class="summary">Top resources by bookings</p>
+
+                <!--<div class="bar-chart" aria-hidden="false" id="popular-resources">
+                    <div class="bar-row">
+                        <div class="bar-label">Study Room A</div>
+                        <div class="bar-track"><div class="bar-fill" data-fill="92"></div></div>
+                        <div class="bar-value">92%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">Computer Lab 2</div>
+                        <div class="bar-track"><div class="bar-fill" data-fill="78"></div></div>
+                        <div class="bar-value">78%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">Meeting Room B</div>
+                        <div class="bar-track"><div class="bar-fill" data-fill="64"></div></div>
+                        <div class="bar-value">64%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">Projector Kit</div>
+                        <div class="bar-track"><div class="bar-fill" data-fill="46"></div></div>
+                        <div class="bar-value">46%</div>
+                    </div>
+                </div>-->
+
+                <ol id="popular-resources">
+                <!-- stats calculated in function -->
+                </ol>
+            </section>
+
+            <section class="card">
+                <h3>Peak Usage Times</h3>
+                <p class="summary">Hours of highest booking activity</p>
+
+                <!--<div class="bar-chart">
+                    <div class="bar-row">
+                        <div class="bar-label">Mon 16:00-18:00</div>
+                        <div class="bar-track"><div class="bar-fill" data-fill="85"></div></div>
+                        <div class="bar-value">85%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">Tue 12:00-14:00</div>
+                        <div class="bar-track"><div class="bar-fill" data-fill="74"></div></div>
+                        <div class="bar-value">74%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">Wed 10:00-12:00</div>
+                        <div class="bar-track"><div class="bar-fill" data-fill="68"></div></div>
+                        <div class="bar-value">68%</div>
+                    </div>
+
+                    <div class="bar-row">
+                        <div class="bar-label">Fri 14:00-16:00</div>
+                        <div class="bar-track"><div class="bar-fill" data-fill="55"></div></div>
+                        <div class="bar-value">55%</div>
+                    </div>
+                </div>-->
+
+                <ol id="popular-times">
+                <!-- stats calculated in function -->
+                </ol>
+
+            </section>
+
+            <section class="card">
+                <h3>Usage Summary</h3>
+                <p class="summary">Quick summary metrics</p>
+                <ul id="quick-metrics">
+                    <!--<li>Total bookings (sample): <strong>1,248</strong></li>
+                    <li>Average bookings per day: <strong>28</strong></li>
+                    <li>Most frequent user type: <strong>Students (68%)</strong></li>
+                    <li>Peak day: <strong>Monday</strong></li>-->
+
+                    <!-- stats calculated in function -->
+                </ul>
+            </section>
+
+            <section class="card">
+                <h3>Notes & Actions</h3>
+                <p class="summary">Recommendations</p>
+                <ol>
+                    <li>Allocate more seats in Study Room A during Mon/Tue evenings.</li>
+                    <li>Open an extra time slot for Computer Lab 2 around noon on Tuesdays.</li>
+                    <li>Monitor Meeting Room B during mid-week for overbooking.</li>
+                </ol>
+            </section>
+        </div>
+    </div>
+
+    <footer>
+         <p>Contact Us:</p>
+            <ul class="contact_list">
+                <li>514-848-2424</li>
+                <li>csshelp@concordia.ca</li>
+                <li>1455 De Maisonneuve Blvd. W. Montreal</li>
+            </ul>
+
+            <p>&copy Team SOEN 2025</p>
+    </footer>
+
+    <script>
+        // Animate bars on load using data-fill attribute
+        window.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.bar-fill').forEach(function(el){
+                var val = parseInt(el.getAttribute('data-fill') || '0', 10);
+                // clamp 0-100
+                val = Math.max(0, Math.min(100, val));
+                // small timeout so transition is visible
+                setTimeout(function(){ el.style.width = val + '%'; }, 50);
+            });
+        });
+
+        // Helper to get isAdmin from either session
+        function getIsAdmin() {
+            let isAdmin = false;
+            let session = localStorage.getItem('userSession') || localStorage.getItem('adminSession');
+            if (session) {
+                try {
+                    const user = JSON.parse(session);
+                    isAdmin = user.isAdmin === true;
+                } catch (e) {}
+            }
+            return isAdmin;
+        }
+
+        // Admin-only access control for statistics page
+        function checkAdminAccess() {
+            if (!getIsAdmin()) {
+                document.addEventListener('DOMContentLoaded', function() {
+                    const content = document.querySelector('.content');
+                    if (content) content.style.display = 'none';
+                    const denied = document.createElement('div');
+                    denied.style.background = '#f8d7da';
+                    denied.style.color = '#721c24';
+                    denied.style.padding = '30px';
+                    denied.style.margin = '40px auto';
+                    denied.style.borderRadius = '8px';
+                    denied.style.maxWidth = '500px';
+                    denied.style.textAlign = 'center';
+                    denied.innerHTML = '<h2>Access Denied</h2><p>This page is only available to administrators.</p>' +
+                        '<button onclick="window.location.href=\'index.html\'" style="margin-top:20px;padding:10px 20px;">Go to Home</button>';
+                    document.body.insertBefore(denied, document.body.querySelector('footer'));
+                });
+            }
+        }
+        checkAdminAccess();
+
+        // Show Statistics nav link only for admins
+        function showStatisticsNavIfAdmin() {
+            if (getIsAdmin()) {
+                document.addEventListener('DOMContentLoaded', function() {
+                    const statsLink = document.getElementById('statisticsNav');
+                    if (statsLink) statsLink.style.display = '';
+                });
+            }
+        }
+        showStatisticsNavIfAdmin();
+
+        // Show/hide .admin-only links
+        function applyAdminVisibility() {
+            const isAdmin = getIsAdmin();
+            document.querySelectorAll('.admin-only').forEach(function(el) {
+                el.style.display = isAdmin ? '' : 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            applyAdminVisibility();
+        });
+
+        //statistics function
+        async function calculateStatistics(){
+            try{
+                const response = await fetch('/api/statistics');
+                const data = await response.json();
+
+                //resource mapping
+                const resource_map = {
+                    1:'Large Study Room D',
+                    2:'Medium Study Room C',
+                    3:'Small Study Room A',
+                    4:'Small Study Room B',
+                    5:'3D Printing Lab',
+                    6:'Electronics Workshop',
+                    7:'Maker Space',
+                    8:'Photography Studio',
+                    9:'Board Room',
+                    10:'Conference Room A',
+                    11:'Conference Room B',
+                    12:'Seminar Room',
+                    13:'Audio Equipment',
+                    14:'Cameras',
+                    15:'Laptops',
+                    16:'Projectors',
+                    17:'Computer Lab 1',
+                    18:'Computer Lab 2',
+                    19:'Engineering Lab',
+                    20:'Mac Lab'
+                };
+
+                //most popular resources
+                const resourcesContainer = document.getElementById('popular-resources');
+                data.popularResources.forEach((resource) => {
+                const resourceName = resource_map[resource.resource_id];
+
+                const resourceRow = `
+                    <li>${resourceName}: <strong>${resource.value_occurrence} bookings</strong></li>
+                `;
+                resourcesContainer.innerHTML += resourceRow;
+                });
+
+                //most popular times
+                const timesContainer = document.getElementById('popular-times');
+                data.popularTimes.forEach((resource) => {
+                    const weekday = resource.weekday;
+                    const timeSlot = resource.time_slot;
+
+                    const timeName = `${weekday} ${timeSlot}`;
+
+                    const timesRow = `
+                        <li>${timeName}: <strong>${resource.value_occurrence} bookings</strong></li>
+                    `;
+                    timesContainer.innerHTML += timesRow;
+                });
+
+                //card 3, quick metrics
+                const total_bookings = data.totalBookings[0].active_bookings;
+                const avg_bookings = data.avgBookings[0].avg_booking_per_day;
+                const popular_user_type = data.frequentUsertype[0].role;
+                const popular_day = data.popularDay[0].weekday;
+
+                const metricsContainer = document.getElementById('quick-metrics');
+                metricsContainer.innerHTML = `
+                    <li>Total bookings (sample): <strong>${total_bookings}</strong></li>
+                    <li>Average bookings per day: <strong>${Math.round(avg_bookings)}</strong></li>
+                    <li>Most frequent user type: <strong>${popular_user_type}</strong></li>
+                    <li>Peak day: <strong>${popular_day}</strong></li>
+                `;
+
+            }
+            catch (error){
+
+            }
+
+
+        }
+
+        //call calculatestats on window load
+        window.onload = function() {
+            calculateStatistics(); 
+        };
+
+    </script>
+</body>
+</html>

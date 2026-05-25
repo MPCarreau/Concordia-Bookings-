@@ -1,0 +1,1296 @@
+/* Admin-only manage resources button */
+.manage-resources-btn {
+    margin-top: 16px;
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #802f2f;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.manage-resources-btn:hover {
+    background: #a33a3a;
+}
+/*setting colour variables*/
+:root {
+  --red: #802f2f;
+  --white: #fffcf2;
+  --deepred: #160404;
+  --blue: #88BDDA;
+  --base-variant: #fffcf2
+}
+
+.darkmode{
+--red: #802f2f;
+--white: #fffcf2;
+--deepred: #160404;
+--blue: #88BDDA;
+--background: #160404;
+--textcolor: #fffcf2;
+}
+
+/* Profile Dropdown Container */
+#profile-container {
+    position: fixed; /* Fixed to the display so that when you scroll, it stays. */
+     /* Uses "top" and "right" to determine exact position*/
+    top: 20px;
+    right: 90px;
+    z-index: 1000;
+}
+
+#profile-button {
+    height: 50px;
+    width: 50px;
+    padding: 0;
+    border-radius: 50%; /* Circle */
+    background-color: var(--base-variant);
+    cursor: pointer; /* Pointer on hover */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Profile Dropdown Menu */
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    min-width: 300px;
+    z-index: 1001;
+}
+
+.profile-dropdown.show {
+    display: block;
+}
+
+/* Profile Header */
+.profile-dropdown-header {
+    padding: 20px;
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2); /* Reminder that the SVG is also white so the alpha value here is important */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+#profile-name {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+#profile-email {
+    font-size: 13px;
+}
+
+/* Dropdown Divider */
+.profile-dropdown-divider {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 0;
+}
+
+/* Dropdown Menu Items */
+.profile-dropdown-menu {
+    padding: 8px 0;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #e4e4e4;
+}
+
+.dropdown-item span {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* Dark mode styles for dropdown */
+.darkmode .profile-dropdown {
+    background: #2d2d2d;
+}
+
+.darkmode .profile-dropdown-header {
+    background: var(--red);
+}
+
+.darkmode .profile-dropdown-divider {
+    background: #444;
+}
+
+.darkmode .dropdown-item {
+    color: var(--white);
+}
+
+.darkmode .dropdown-item:hover {
+    background-color: #3d3d3d;
+}
+
+#theme-switch{
+    height: 50px;
+    width: 50px;
+    padding: 0;
+    border-radius: 50%;
+    background-color: var(--base-variant);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 7;
+       
+}
+
+
+
+#theme-switch svg{
+    fill: var(--primary-color);
+
+}
+
+#theme-switch svg:last-child{
+    display:none;
+}
+.darkmode #theme-switch svg:first-child{
+    display:none;
+}
+.darkmode #theme-switch svg:last-child{
+    display:block;
+}
+
+* {
+    font-family: 'Poppins';
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--textcolor); 
+}
+/*Header styling*/
+header {
+    text-align: left;
+    color: var(--white);
+    font-size: 25px;
+
+    background: var(--red);
+    
+    width: 100%;
+    padding: 20px;
+    
+    box-sizing: border-box;
+}
+
+
+/*Nav styling*/
+nav {
+    background: var(--deepred);
+
+    text-align: left;
+    word-spacing: 10px;
+    font-size: larger;
+    color: var(--white);
+
+    width: 100%;
+    padding: 10px 20px 10px 20px;
+
+    box-sizing: border-box;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--white);
+
+
+
+}
+
+nav a:hover {
+    color: var(--blue);
+}
+
+/*Home Styling*/
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+
+}
+
+.content-grid *{
+    box-sizing: border-box;
+}
+
+.content-grid img{
+    border-radius: 2px;
+}
+
+#grid-rooms, #grid-help, #grid-book, #grid-welcome {
+    padding: 30px;
+    text-align: center;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    border-radius: 4px;
+}
+
+#grid-welcome .welcome-step {
+    background-color: var(--blue);
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    padding: 0px 15px;
+    gap: 15px;
+
+    margin-bottom: 20px;
+
+    height: 80px;
+}
+
+#grid-welcome h3 {
+    font-size: 3ch;
+    margin-top: 0px;
+}
+
+#grid-welcome h4 {
+    font-size: 2.5ch;
+    background-color: var(--red);
+    color: var(--white);
+    border-radius: 5px;
+
+    margin: 10px auto;
+    padding: 10px 30px;
+
+    width:fit-content;
+}
+
+#grid-welcome .welcome-number {
+    background-color: var(--white);
+    border-radius: 50%;
+    width: max-content;
+    padding: 5px 16px;
+
+    font-size: 3ch;
+    color: var(--blue);
+    font-weight: bold;
+}
+
+#grid-welcome p {
+    color: var(--deepred);
+    font-size: 2ch;
+    text-align: left;
+}
+
+#grid-welcome a {
+    text-decoration: none;
+    color: var(--red);
+    font-weight: 700;
+}
+
+#grid-welcome a:hover {
+    color: var(--white);
+}
+
+#grid-help h3 {
+    text-align: center;
+    font-size: 3ch;
+}
+
+#grid-help > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+#grid-help div h4 {
+    font-size: 2ch;
+    font-weight: 550;
+    margin-bottom: 8px;
+    color: var(--white);
+}
+
+#grid-help div p {
+    margin: 2px 0;
+    color: var(--white);
+}
+
+/* Optional: add icons for each help section */
+#grid-help div div {
+    background-color: var(--red);
+    padding: 0 0 30px 0;
+    border-radius: 8px;
+}
+
+#grid-help hr {
+    width: 80%;
+    border: 1px solid var(--white);
+    margin: 10px auto;
+}
+
+
+#grid-book {
+    position: relative;      
+    width: 100%;              
+    height: 100%;             
+    overflow: hidden;          
+    padding: 0px;
+}
+
+#grid-book img {
+    width: 100%;              
+    height: 100%;           
+    object-fit: cover;         
+    display: block;
+}
+
+#grid-book .overlay-text {
+    position: absolute;        
+    top: 0px;                  
+    background-color: var(--deepred); 
+    padding: 15px;
+    max-width: 30%;           
+    height: 100%;
+}
+
+#grid-book .overlay-text h3 {
+    font-weight: 350;
+    font-size: 3ch;
+    color: var(--white);
+    text-align: left;
+}
+
+#grid-book a {
+    display: inline-block;
+    padding: 6px 10px;
+    background-color: var(--red);
+    color: white;
+    text-decoration: none;
+    font-weight: 350;
+    border-radius: 3px;
+    margin-top: 80%;
+}
+
+#grid-book a:hover {
+    background-color: var(--white);
+    color: var(--red);
+}
+
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 450px;
+  position: relative;
+  margin: auto;
+}
+
+/* Hide the images by default */
+.mySlides {
+  display: none;
+}
+
+
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+.prev {
+  left: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 15px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+/*homepage above*/
+
+
+/* Ensure injected statistics link matches nav links */
+nav a.statistics-link {
+    text-decoration: none;
+    color: var(--white);
+}
+
+nav a.statistics-link:hover {
+    color: var(--blue);
+}
+
+/*content styling*/
+.content {
+    padding: 20px;
+}
+
+
+
+/*Footer styling*/
+footer {
+    text-align: left;
+    background: var(--red);
+    color: var(--white);
+
+    padding: 20px;
+
+}
+
+footer .contact_list {
+    list-style-type: none;
+    padding: 0;
+}
+
+
+/*login/register page styling*/
+
+/*login/register form*/
+.login_form {
+
+    box-shadow: var(--deepred) 0px 5px 15px;
+    border-radius: 10px;
+    padding: 20px 50px 50px 50px;
+
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+
+    margin: 50px auto 50px auto;
+}
+
+.login_form h3, .login_form div {
+    margin-bottom: 20px;
+}
+
+.login_form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.login_form input[type="text"], 
+.login_form input[type="email"], 
+.login_form input[type="tel"], 
+.login_form input[type="password"] {
+    width: 100%;
+    padding: 10px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.login_form button {
+    margin-top: 15px;
+    width: 35%;
+}
+
+/*Forgot password styling*/
+.forgot-password-section {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.forgot-password-link {
+    color: var(--deepred);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password-link:hover {
+    text-decoration: underline;
+    color: var(--red);
+}
+
+/*Admin login styling*/
+.admin-login-section {
+    margin-top: 20px;
+    text-align: center;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.admin-toggle-btn {
+    background: white;
+    color: black;
+    border: none;
+    padding: 6px 50px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+    width: auto;
+    min-width: 200px;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    height: 32px;
+}
+
+.admin-toggle-btn:hover {
+    background: var(--red);
+}
+
+.arrow-down {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.admin-login-dropdown {
+    display: none;
+    margin-top: 15px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f9f9f9;
+}
+
+.admin-form div {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.admin-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--deepred);
+}
+
+.admin-form input[type="email"],
+.admin-form input[type="password"] {
+    width: 100%;
+    padding: 10px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.admin-form button {
+    background: #ccc;
+    color: black;
+    border: 1px solid black;
+    padding: 6px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    height: 32px;
+}
+
+.admin-form button:hover {
+    background: var(--red);
+}
+
+/*Password field styling*/
+.password-field {
+    position: relative;
+}
+
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container input {
+    width: 100%;
+    padding: 10px 40px 10px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.2;
+    margin: 0;
+    height: 40px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 20%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px 4px;
+    user-select: none;
+    color: var(--deepred);
+    font-weight: 600;
+    border-radius: 2px;
+    white-space: nowrap;
+    z-index: 1;
+    line-height: 1;
+    width: auto;
+    max-width: 36px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-password:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-color: var(--deepred);
+}
+
+.admin-form .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 20%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px 4px;
+    user-select: none;
+    color: var(--deepred);
+    font-weight: 600;
+    border-radius: 2px;
+    white-space: nowrap;
+    z-index: 1;
+    line-height: 1;
+    width: auto;
+    max-width: 36px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+}
+
+.admin-form .toggle-password:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure cards and common UI containers are slightly lighter in dark mode for better contrast. */
+body.darkmode .card,
+body.darkmode .login_form,
+
+body.darkmode .booking-controls,
+body.darkmode .availability-grid,
+body.darkmode .verification-container,
+body.darkmode .verification-instructions,
+body.darkmode .registration-message,
+body.darkmode .login-message,
+body.darkmode .forgot-password-message,
+body.darkmode .reset-password-message
+ {
+    background:  #802f2f !important;
+    box-shadow: var(--deepred) 0px 3px 8px !important;
+    border-radius: 8px !important;
+}
+
+body.darkmode #profile_box{
+    background:  #111111 !important;
+    box-shadow: var(--deepred) 0px 3px 8px !important;
+    border-radius: 8px !important;
+}
+body.darkmode #contact_info{
+ background:  #802f2f !important;
+    box-shadow: var(--deepred) 0px 3px 8px !important;
+    border-radius: 8px !important;
+    
+}
+/* Dark-mode label color inside the contact info box */
+body.darkmode #contact_info label,
+body.darkmode #contact_info .contact_label,
+body.darkmode #contact_info .contact_list li {
+    color: var(--white) !important;
+}
+
+body.darkmode #my-bookings-box{
+    background:  #111111 !important;
+    box-shadow: var(--deepred) 0px 3px 8px !important;
+    border-radius: 8px !important;
+    color: var(--white) !important;
+}
+
+/* Make the inner content appear as a red panel inside the dark outer frame.
+   We target direct children so dynamically injected HTML (via innerHTML)
+   gets the red panel look without changing the markup. */
+body.darkmode #my-bookings-box {
+    padding: 18px !important;
+}
+
+body.darkmode #my-bookings-box > * {
+    background: var(--red) !important;
+    color: var(--white) !important;
+    padding: 18px !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+
+/* Force headings, labels and other inline-styled text to white in dark mode */
+body.darkmode #my-bookings-box h3,
+body.darkmode #my-bookings-box h4,
+body.darkmode #my-bookings-box p,
+body.darkmode #my-bookings-box strong,
+body.darkmode #my-bookings-box label,
+body.darkmode #my-bookings-box .cancel-booking-btn,
+body.darkmode #my-bookings-box span {
+    color: var(--white) !important;
+}
+
+/* Ensure buttons remain readable */
+body.darkmode #my-bookings-box .cancel-booking-btn {
+    background-color: #b23b3b !important;
+    color: var(--white) !important;
+}
+
+/* Dark mode: make form controls in makeBooking readable */
+body.darkmode #dateSelect,
+body.darkmode #categorySelect,
+body.darkmode .booking-controls .control-group select,
+body.darkmode .booking-controls .control-group input[type="date"] {
+    color: var(--white) !important;
+    background: var(--red) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* Make select and date inputs share the red inner panel look */
+body.darkmode #dateSelect,
+body.darkmode #categorySelect,
+body.darkmode .booking-controls .control-group select {
+    color: var(--white) !important;
+    background: var(--red) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* Improve placeholder text / caret visibility for inputs in dark mode */
+body.darkmode #dateSelect::placeholder,
+body.darkmode .booking-controls input::placeholder {
+    color: rgba(255,255,255,0.7) !important;
+}
+
+/* Legend (Available / Booked / Maintenance) card uses same red panel in dark mode */
+body.darkmode .legend {
+    background: var(--red) !important;
+    color: var(--white) !important;
+    box-shadow: var(--deepred) 0px 3px 8px !important;
+    border-radius: 8px !important;
+}
+
+body.darkmode .legend .legend-item,
+body.darkmode .legend span,
+body.darkmode .legend .legend-color {
+    color: var(--white) !important;
+}
+
+/* Make the small legend color boxes stand out against the red background */
+body.darkmode .legend .legend-color {
+    border: 1px solid rgba(255,255,255,0.12) !important;
+}
+
+/* Make the form labels white in dark mode (Select Date / Resource Category) */
+body.darkmode .booking-controls .control-group label,
+body.darkmode .booking-controls label {
+    color: var(--white) !important;
+}
+
+/* Try to style select dropdown options — note: browser support varies for native select dropdown styling */
+body.darkmode select option,
+body.darkmode #categorySelect option {
+    background: var(--red) !important;
+    color: var(--white) !important;
+}
+
+/* Date input - make the picker indicator more visible on red (WebKit browsers) */
+body.darkmode input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(2) !important;
+}
+
+/* For Firefox, try to style the dropdown and calendar via appearance reset (limited) */
+body.darkmode select,
+body.darkmode input[type="date"] {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+/* Booking modal: match the red inner panel look in dark mode */
+body.darkmode .booking-modal {
+    background-color: rgba(0,0,0,0.6) !important;
+}
+
+body.darkmode .booking-modal .modal-content {
+    background: var(--red) !important;
+    color: var(--white) !important;
+    box-shadow: var(--deepred) 0px 5px 15px !important;
+    border-radius: 8px !important;
+    padding: 24px !important;
+}
+
+body.darkmode .booking-modal .modal-header {
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+body.darkmode .booking-modal .modal-header h3 {
+    color: var(--white) !important;
+}
+
+body.darkmode .booking-modal .form-group label {
+    color: var(--white) !important;
+}
+
+body.darkmode .booking-modal .form-group input,
+body.darkmode .booking-modal .form-group textarea {
+    background: rgba(0,0,0,0.12) !important;
+    color: var(--white) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+body.darkmode .booking-modal .modal-buttons .btn-primary {
+    background-color: #b23b3b !important;
+    color: var(--white) !important;
+}
+
+body.darkmode .booking-modal .modal-buttons .btn-secondary {
+    background-color: rgba(255,255,255,0.08) !important;
+    color: var(--white) !important;
+}
+
+/*Error message styling*/
+.error-message {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+    font-weight: 500;
+}
+
+/*Registration message styling*/
+.registration-message {
+    padding: 15px;
+    margin: 20px auto;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    max-width: 400px;
+}
+
+.registration-message.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.registration-message.error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.registration-message.error a {
+    color: var(--red);
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.registration-message.error a:hover {
+    color: var(--deepred);
+    text-decoration: none;
+}
+
+/*Email verification instructions styling*/
+.verification-instructions {
+    box-shadow: var(--deepred) 0px 5px 15px;
+    border-radius: 10px;
+    padding: 30px 50px;
+    text-align: center;
+    width: 400px;
+    margin: 30px auto;
+    background-color: #f8f9fa;
+    border: 2px solid var(--blue);
+}
+
+.verification-instructions h3 {
+    color: var(--deepred);
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.verification-instructions p {
+    margin-bottom: 15px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.verification-instructions strong {
+    color: var(--red);
+    font-weight: 600;
+}
+
+.verification-instructions small {
+    font-size: 12px;
+    color: #666;
+}
+
+.verification-instructions a {
+    color: var(--red);
+    text-decoration: underline;
+}
+
+.verification-instructions a:hover {
+    color: var(--deepred);
+    text-decoration: none;
+}
+
+/*Email verification page styling*/
+.verification-container {
+    box-shadow: var(--deepred) 0px 5px 15px;
+    border-radius: 10px;
+    padding: 40px 50px;
+    text-align: center;
+    max-width: 500px;
+    margin: 50px auto;
+}
+
+.verification-container h2 {
+    color: var(--deepred);
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+.verification-result {
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+.verification-result.loading {
+    background-color: #e3f2fd;
+    border: 1px solid #90caf9;
+    color: #0d47a1;
+}
+
+.verification-result.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.verification-result.error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.login-link, .register-link {
+    color: var(--red);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    border: 2px solid var(--red);
+    border-radius: 5px;
+    display: inline-block;
+    margin: 5px;
+    transition: all 0.3s ease;
+}
+
+.login-link:hover, .register-link:hover {
+    background-color: var(--red);
+    color: var(--white);
+    text-decoration: none;
+}
+
+/*Login message styling*/
+.login-message {
+    padding: 15px;
+    margin: 20px auto;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    max-width: 400px;
+}
+
+.login-message.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.login-message.error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+/*Forgot password message styling*/
+.forgot-password-message {
+    padding: 15px;
+    margin: 20px auto;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    max-width: 400px;
+}
+
+.forgot-password-message.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.forgot-password-message.error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+/*Reset password message styling*/
+.reset-password-message {
+    padding: 15px;
+    margin: 20px auto;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    max-width: 400px;
+}
+
+.reset-password-message.success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.reset-password-message.error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+/*profile styling*/
+
+#profile_box {
+    box-shadow: var(--deepred) 0px 5px 15px;
+    border-radius: 10px;
+
+    padding: 20px;
+}
+
+#profile_box img {
+    border-radius: 20px;
+    box-shadow: var(--deepred) 0px 5px 15px;
+}
+
+#avatar {
+    display: flex;
+    gap: 20px;
+
+    padding-bottom: 20px;
+
+    font-size: 20px;
+}
+
+#profile_box #contact_info {
+    list-style-type: none;
+
+    display: inline-block;
+    padding: 0px 10px 10px 10px;
+
+    border-radius: 20px;
+    box-shadow: var(--deepred) 0px 5px 15px;
+
+
+}
+
+#profile_box li {
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+}
+
+/* My Bookings Box Customization Section */
+.my-bookings-outer {
+    /* Margin, border, and padding color customization */
+    background-color: #ffffff;
+    border: 2px solid #ffffff; /* Change this for border color */
+    border-radius: 10px;
+    padding: 30px;
+    margin: 25px auto;
+    max-width: 800px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body.darkmode .my-bookings-outer {
+    background-color: #fff !important;
+    border: 2px solid #181616 !important; /* Change this for dark mode border color */
+    border-radius: 10px !important;
+    padding: 30px !important;
+    margin: 25px auto !important;
+    max-width: 800px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Dark mode text colors for booking items - override inline styles */
+body.darkmode #my-bookings-box * {
+    color: #000 !important;
+}
+
+/* Keep the main title "My Bookings (1)" white in dark mode */
+body.darkmode #my-bookings-box > div > h3 {
+    color: #fff !important;
+}
+
+body.darkmode #my-bookings-box h4,
+body.darkmode #my-bookings-box p,
+body.darkmode #my-bookings-box div,
+body.darkmode #my-bookings-box strong,
+body.darkmode #my-bookings-box span {
+    color: #000 !important;
+}
+
+/* Override inline background colors in dark mode */
+body.darkmode #my-bookings-box div[style*="background-color"] {
+    background-color: #fff !important;
+}
+
+/* Ensure the Need Help? box matches the My Bookings inner box in dark mode */
+body.darkmode .need-help-inner {
+    background: var(--red) !important;
+    color: var(--white) !important;
+    padding: 18px !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+}
+
+/* Ensure the Need Help? box matches the My Bookings inner box in light mode */
+.need-help-inner {
+    background: #fff;
+    color: #000;
+    padding: 18px;
+    border-radius: px;
+    box-shadow: none;
+}
+
+/* Outer box for Need Help? section */
+/* Need Help? Box Customization Section */
+.need-help-outer {
+    /* Margin, border, and padding color customization */
+    margin-bottom: 20px; /* Change this for margin */
+
+    border: 2px solid #ffffff; /* Change this for border color */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(253, 252, 252, 0.904);
+    max-width: 800px;
+    padding: 18px; /* Change this for padding */
+    background: #fff; /* Change this for padding color */
+    color: #000; /* Change this for text color */
+}
+body.darkmode .need-help-outer {
+    background: #131212 !important;
+    border: 2px solid #181616 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    max-width: 800px !important;
+    margin-bottom: 20px !important;
+    padding: 18px !important;
+}
+
+
+
