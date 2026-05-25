@@ -9,15 +9,14 @@ Micah Carreau
 
 Worked on the development of several administrative and user-focused features, including:
 
-Booking approval and rejection system for administrators
-Resource blocking and unblocking functionality
-Administrative controls to create, edit, and remove resources (frontend and backend)
-Statistics dashboard implementation (frontend)
-Email notification system for booking confirmations, modifications, and cancellations
-Dynamic navigation system based on user session state and role permissions (logged out, user, or administrator)
-Dark mode feature implementation
-
-Also contributed to improving overall user experience and administrative workflow management throughout the application.
+- Booking approval and rejection system for administrators
+- Resource blocking and unblocking functionality
+- Administrative controls to create, edit, and remove resources (frontend and backend)
+- Statistics dashboard implementation (frontend)
+- Email notification system for booking confirmations, modifications, and cancellations
+- Dynamic navigation system based on user session state and role permissions (logged out, user, or administrator)
+- Dark mode feature implementation
+- Also contributed to improving overall user experience and administrative workflow management throughout the application.
 
 
 
